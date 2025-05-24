@@ -1,3 +1,39 @@
+@font-face {
+    font-family: "Outfit";
+    src: url("./Fonts/Outfit-ExtraLight.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Monoton";
+    src: url("./Fonts/Monoton-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Rosca";
+    src: url("./Fonts/rosca.otf") format("truetype");
+}
+
+@font-face {
+    font-family: "Gristela";
+    src: url("./Fonts/gristela.otf") format("truetype");
+}
+
+@font-face {
+    font-family: "Righteous";
+    src: url("./Fonts/Righteous-Regular.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("./Fonts/Poppins-Light.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Roboto";
+    src: url("./Fonts/Roboto-VariableFont_wdth\,wght.ttf") format("truetype");
+}
+
+
 * {
     margin: 0;
     padding: 0;
@@ -482,7 +518,7 @@ svg {
 }
 
 .products {
-    width: 65%;
+    width: 80%;
     height: 70%;
     background-color: #8e928e;
     display: grid;
@@ -557,7 +593,7 @@ svg {
 }
 
 .products li #content:hover {
-    background-color: #00000093;
+    background-color: #514e4e93;
     transition: all .35s ease-in-out;
 }
 
@@ -601,10 +637,15 @@ svg {
     justify-content: space-between;
 }
 
-.item--name {
-    background-color: #ffffff29;
+.products .item--name {
     color: black;
     width: 100%;
+}
+
+.items--container .item--name {
+    width: 100%;
+    height: 100%;
+    color: #fff;
 }
 
 .selected--item--page {
@@ -641,14 +682,14 @@ svg {
 }
 
 .selected--item--page .selected--container {
-    width: 25%;
-    max-width: 1000px;
-    min-width: 550px;
-    height: 60%;
+    width: fit-content;
+    max-width: 50%;
+    height: fit-content;
+    padding: 20px;
     position: absolute;
     top: calc(50vh - currentHeight/2);
     left: calc(50vw - currentWidth/2);
-    background-color: #1F201F;
+    background-color: #2d2d2d;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -665,6 +706,11 @@ svg {
     justify-content: space-evenly;
 }
 
+.selected--item--page .selected--container .selected--content h1 {
+    font-family: "Poppins";
+    font-size: 1.2rem;
+}
+
 .selected--item--page .selected--container .selected--content .texts {
     width: 80%;
     height: 80%;
@@ -675,7 +721,7 @@ svg {
     justify-content: space-evenly;
     gap: 15px;
     background-color: #ffffff17;
-    margin-top: 50px;
+    /* margin-top: 50px; */
 }
 
 .selected--item--page .selected--container .selected--content .selected--items--buttons {
@@ -686,6 +732,7 @@ svg {
     align-items: center;
     justify-content: space-evenly;
     gap: 15px;
+    margin-top: 10px;
     /* background-color: #ffffff17; */
 }
 
@@ -699,6 +746,7 @@ svg {
     color: #fff;
     font-size: 1em;
     font-family: 'Roboto';
+    margin: 20px 0 20px 0;
 }
 
 .selected--item--page .selected--container .selected--content .selected--items--buttons button:hover {
@@ -962,6 +1010,20 @@ ul.searched--list::-webkit-scrollbar-track {
     text-align: center;
 }
 
+#removeButton {
+    fill: #fff;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    stroke: #fff;
+}
+
+#removeButton:hover {
+    fill: #ff6e7f;
+    stroke: #ff6e7f;
+    transition: all .35s ease-in-out;
+}
+
 #cart--close--button {
     fill: #fff;
     position: absolute;
@@ -1191,6 +1253,38 @@ ul.searched--list::-webkit-scrollbar-track {
     .welcome--page.pages .content .left .content span {
         font-size: 5rem;
     }
+
+    .products {
+        width: 80%;
+        height: 70%;
+        background-color: #8e928e;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-rows: repeat(auto-fit, 300px);
+        padding: 0;
+        margin: 0;
+        place-items: center;
+        font-size: 1rem;
+        overflow-y: scroll;
+        margin-bottom: 50px;
+        /* overflow-x: hidden; */
+        border-radius: 15px;
+        
+    }
+
+    .products li {
+        cursor: pointer;
+        width: 200px;
+        height: 300px;
+        transition: all .35s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;   
+        font-family: "Outfit";
+    }
+
+
 }
 
 @media screen and (max-width: 942px) {

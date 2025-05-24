@@ -1125,12 +1125,19 @@ const sum = function(list) {
     document.querySelector(".total--price").innerHTML = `Total Price: ₵${total}`
 }
 
-
 cart.addEventListener("click", () => {
     sum(prices)
     itemsHidden.classList.add("item--list--show")
-    removeButton = document.querySelectorAll("#removeButton")
-})
+  })
+  
+const removeButton = document.querySelectorAll("#removeButton")
+for (let index = 0; index < removeButton.length; index++) {
+  removeButton[index].addEventListener("click", () => {
+      removeItem(index)
+      alert("Hi")
+  })
+      
+}
 
 menuBar.addEventListener("click", () => {
     menu.classList.toggle("item-show")
@@ -1231,8 +1238,7 @@ clearCart.addEventListener("click", () => {
 })
 
 const removeItem = (item) => {
-    let itemIndex = cartList.indexOf(item)
-    cartList.splice(itemIndex, 1)
+    cartList.splice(item, 1)
     itemList.innerHTML = cartList.join("")
     localStorage.setItem("cartList", JSON.stringify(cartList))
     updateCart(cartList)
@@ -1276,6 +1282,7 @@ let storedData = localStorage.getItem("productData");
 if (storedData) {
     yourData.data = JSON.parse(storedData);
     initializeProducts();
+    sum(prices)
     // initializeCart();
 } else {
     // fetch("https://sheetdb.io/api/v1/5ayhpj0thqk3w")
@@ -1290,6 +1297,7 @@ if (storedData) {
     yourData.data = products
     localStorage.setItem("productData", JSON.stringify(yourData.data))
     initializeProducts()
+    sum(prices)
 }
 
 

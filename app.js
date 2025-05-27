@@ -10,13 +10,14 @@ const itemsHidden = document.querySelector(".item--list--hidden")
 const cartCloseButton = document.getElementById("cart--close--button")
 const searchBar = document.getElementById("search")
 const orderButtton = document.getElementById("order")
-const itemList = document.querySelector(".items")
+const itemList = document.querySelector(".items--list")
 const selectedItemsPage = document.querySelector(".selected--item--page")
 const clearCart = document.querySelector(".clear--cart")
 const searchedList = document.getElementById("searchedList")
 const counterDisplay = document.querySelectorAll("#counter")
 const selectPricePage = document.getElementById("selectPrice")
 const el = document.getElementById("price")
+
 let counter = 0
 let cartList = []
 let searchList = []
@@ -1125,18 +1126,22 @@ const sum = function(list) {
     document.querySelector(".total--price").innerHTML = `Total Price: ₵${total}`
 }
 
+const removeButton = []
+
 cart.addEventListener("click", () => {
     sum(prices)
     itemsHidden.classList.add("item--list--show")
-  })
-  
-const removeButton = document.querySelectorAll("#removeButton")
-for (let index = 0; index < removeButton.length; index++) {
-  removeButton[index].addEventListener("click", () => {
-      removeItem(index)
+    removeButton = document.querySelectorAll("#removeButton")
+
+})
+
+if (removeButton.length >= 1) {
+  for (let index = 0; index < removeButton.length; index++) {
+    removeButton[index].addEventListener("click", () => {
       alert("Hi")
-  })
-      
+    })
+    
+  }
 }
 
 menuBar.addEventListener("click", () => {
@@ -1176,7 +1181,17 @@ const notify = (message) => {
 }
 
 const updateCart = (productData) => {
-    itemList.innerHTML = cartList.join("");
+    itemList.innerHTML = `
+                            <tr class="title--header">
+                            <td class="item--name">Product</td>
+                            <td class="item--price">Price</td>
+                            <td class="item--quantity">
+                                Quantity
+                            </td>
+                            <td class="item--subtotal">Subtotal</td>
+                        </tr>
+    `
+    itemList.innerHTML += cartList.join("");
     localStorage.setItem("cartList", JSON.stringify(cartList));
     notify(productData.ItemName);
     updateCounterDisplay();
@@ -1202,22 +1217,29 @@ const addToCartSelect = (productData, productDataPrice) => {
 }
 
 
-const addToCart = (productData) => {
+const addToCart = (productData, quantity) => {
+  quantity = Number(quantity) || 1; // Default to 1 if quantity is not provided
     if (productData.Price.split('').length > 3 && productData.Price.split('').length > 4) {
         openSelectPrice(productData)
         if  (selectedItemsPage.classList.contains("selected--item--page--show")) {
           selectedItemsPage.classList.remove("selected--item--page--show")
       }
     } else {
-      const newElement = `<li class="item">
-      <div class="closee">
+      const newElement = `
+                          <tr class="item">
+                            <td class="item--name">
+                                                  <div class="closee" onclick="removeItem(${removeButton.length})">
       <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="24px" height="24px" stroke="#fff" stroke-width="1" id="removeButton""><path d="M 19.990234 2.9863281 A 1.0001 1.0001 0 0 0 19.292969 3.2929688 L 12 10.585938 L 4.7070312 3.2929688 A 1.0001 1.0001 0 0 0 3.9902344 2.9902344 A 1.0001 1.0001 0 0 0 3.2929688 4.7070312 L 10.585938 12 L 3.2929688 19.292969 A 1.0001 1.0001 0 1 0 4.7070312 20.707031 L 12 13.414062 L 19.292969 20.707031 A 1.0001 1.0001 0 1 0 20.707031 19.292969 L 13.414062 12 L 20.707031 4.7070312 A 1.0001 1.0001 0 0 0 19.990234 2.9863281 z"/></svg>
       </div>
-      <div>
-      <span class="item--name">${productData.ItemName}</span>
-      <span class="item--price">₵${productData.Price}</span>
-      </div>
-      </li>`;
+                            <span>${productData.ItemName}</span>
+                            </td>
+                            <td class="item--price">${productData.Price}</td>
+                            <td class="item--quantity">
+                            <input type="number" value="${quantity}" min="1" class="item--quantity--input" onchange="addToCartSelect(${JSON.stringify(productData)}, this.value)">
+                            </td>
+                            <td class="item--subtotal">${quantity * Number(productData.Price)}</td>
+                        </tr>
+      `;
       
       if  (selectedItemsPage.classList.contains("selected--item--page--show")) {
           selectedItemsPage.classList.remove("selected--item--page--show")
@@ -1232,23 +1254,33 @@ clearCart.addEventListener("click", () => {
     cartList = [];
     prices = []
     localStorage.setItem("cartList", JSON.stringify(cartList));
-    itemList.innerHTML = ""
+    itemList.innerHTML = `
+                            <tr class="title--header">
+                            <td class="item--name">Product</td>
+                            <td class="item--price">Price</td>
+                            <td class="item--quantity">
+                                Quantity
+                            </td>
+                            <td class="item--subtotal">Subtotal</td>
+                        </tr>
+    `
     updateCounterDisplay();
     sum(prices)
 })
 
 const removeItem = (item) => {
-    cartList.splice(item, 1)
+    cartList.splice(-item, 1)
     itemList.innerHTML = cartList.join("")
     localStorage.setItem("cartList", JSON.stringify(cartList))
     updateCart(cartList)
-    updateCounterDisplay()
+    prices.splice(-item, 1)
+    sum(prices)
 }
 
 
 
 const updateCounterDisplay = () => {
-    let numberOfItems = itemList.getElementsByTagName("li").length;
+    let numberOfItems = itemList.getElementsByClassName("item").length;
     if (numberOfItems > 0) {
         counterDisplay.forEach((counter) => {
             counter.style.background = "red";
@@ -1267,7 +1299,9 @@ window.addEventListener("load", () => {
   let storedCartList = localStorage.getItem("cartList");
   if (storedCartList) {
       cartList = JSON.parse(storedCartList);
-      itemList.innerHTML = cartList.join("");
+      if (cartList.length > 0) {
+        itemList.innerHTML = cartList.join("");
+      }
       updateCounterDisplay();
   }
 });
@@ -1314,7 +1348,7 @@ function initializeProducts() {
                                                 <span class="item--name">${productData.ItemName}</span>
                                                 <p class="item--price">₵${productData.Price}</p>
                                                 <p class="${productData.InStock ? "in--stock" : "out--stock"}">${productData.Status}</p>
-                                                <span tabindex="0" class="add--area" onclick='addToCart(${JSON.stringify(productData)})'><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>Add to Cart</span>
+                                                <span tabindex="0" class="add--area"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>Add to Cart</span>
                                             </div>
                                         </div>
         
@@ -1329,7 +1363,7 @@ function initializeProducts() {
                                                 <span class="item--name">${productData.ItemName}</span>
                                                 <p class="item--price">₵${productData.Price}</p>
                                                 <p class="${productData.InStock ? "in-stock" : "out-stock"}}">${productData.Status}</p>
-                                                <span tabindex="0" class="add--area" onclick='addToCart(${JSON.stringify(productData)})'><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>Add to Cart</span>
+                                                <span tabindex="0" class="add--area"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>Add to Cart</span>
                                             </div>
                                         </div>
         
@@ -1344,7 +1378,7 @@ function initializeProducts() {
                                                 <span class="item--name">${productData.ItemName}</span>
                                                 <p class="item--price">₵${productData.Price}</p>
                                                 <p class="${productData.InStock ? "in-stock" : "out-stock"}}">${productData.Status}</p>
-                                                <span tabindex="0" class="add--area" onclick='addToCart(${JSON.stringify(productData)})'><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>Add to Cart</span>
+                                                <span tabindex="0" class="add--area"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>Add to Cart</span>
                                             </div>
                                         </div>
         
@@ -1360,7 +1394,7 @@ function initializeProducts() {
                                                 <span class="item--name">${productData.ItemName}</span>
                                                 <p class="item--price">₵${productData.Price}</p>
                                                 <p class="${productData.InStock ? "in-stock" : "out-stock"}}">${productData.Status}</p>
-                                                <span tabindex="0" class="add--area" onclick='addToCart(${JSON.stringify(productData)})'><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>Add to Cart</span>
+                                                <span tabindex="0" class="add--area"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>Add to Cart</span>
                                             </div>
                                         </div>
         
@@ -1376,7 +1410,7 @@ function initializeProducts() {
                                                 <span class="item--name">${productData.ItemName}</span>
                                                 <p class="item--price">₵${productData.Price}</p>
                                                 <p class="${productData.InStock ? "in-stock" : "out-stock"}}">${productData.Status}</p>
-                                                <span tabindex="0" class="add--area" onclick='addToCart(${JSON.stringify(productData)})'><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>Add to Cart</span>
+                                                <span tabindex="0" class="add--area"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>Add to Cart</span>
                                             </div>
                                         </div>
         
@@ -1391,7 +1425,7 @@ function initializeProducts() {
                                                 <span class="item--name">${productData.ItemName}</span>
                                                 <p class="item--price">₵${productData.Price}</p>
                                                 <p class="${productData.InStock ? "in-stock" : "out-stock"}}">${productData.Status}</p>
-                                                <span tabindex="0" class="add--area" onclick='addToCart(${JSON.stringify(productData)})'><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>Add to Cart</span>
+                                                <span tabindex="0" class="add--area"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>Add to Cart</span>
                                             </div>
                                         </div>
         
@@ -1503,6 +1537,12 @@ const selectItem = (productElement) => {
 
 for (let i = 0; i < product.length; i++) {
     product[i].getElementsByTagName("img")[0].addEventListener("click", () => {
+        selectItem(product[i]);
+    });
+}
+
+for (let i = 0; i < product.length; i++) {
+    product[i].getElementsByClassName("add--area")[0].addEventListener("click", () => {
         selectItem(product[i]);
     });
 }

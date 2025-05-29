@@ -1188,23 +1188,34 @@ const updateCart = (productData) => {
     updateCounterDisplay();
 };
 
-const addToCartSelect = (productData, productDataPrice) => {
-  const newElement = `<li class="item">
-  <div class="closee">
-  <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="24px" height="24px" stroke="#fff" stroke-width="1" id="removeButton""><path d="M 19.990234 2.9863281 A 1.0001 1.0001 0 0 0 19.292969 3.2929688 L 12 10.585938 L 4.7070312 3.2929688 A 1.0001 1.0001 0 0 0 3.9902344 2.9902344 A 1.0001 1.0001 0 0 0 3.2929688 4.7070312 L 10.585938 12 L 3.2929688 19.292969 A 1.0001 1.0001 0 1 0 4.7070312 20.707031 L 12 13.414062 L 19.292969 20.707031 A 1.0001 1.0001 0 1 0 20.707031 19.292969 L 13.414062 12 L 20.707031 4.7070312 A 1.0001 1.0001 0 0 0 19.990234 2.9863281 z"/></svg>
-  </div>
-  <div>
-  <span class="item--name">${productData.ItemName}</span>
-  <span class="item--price">₵${productDataPrice}</span>
-  </div>
-  </li>`;
+const addToCartSelect = (productData, quantity, productDataPrice) => {
+  const newElement = `
+                      <li class="item">
+                        <span class="item--info">
+                            <span class="name">${productData.ItemName}</span>
+                            <div>
+                                <span class="price">Price: ₵${Number(productDataPrice)}</span>
+                                <span class="quantity">Quantity: ${quantity}</span>
+                                <span class="subtotal">Subtotal: ₵${Number(productDataPrice)*quantity}</span>
+                            </div>
+                        </span>
+                        <span class="list--buttons">
+                            <button class="remove--item" onclick="removeProductItem('${productData.ItemName}')">Remove</button>
+                            <span class="change">
+                                <button class="add--quantity" onclick="increaseQuantity('${productData.ItemName}')">+</button>
+                                <button class="subtract--quantity" onclick="decreaseQuantity('${productData.ItemName}')">-</button>
+                            </span>
+                        </span>
+                    </li>
+  `;
   
-  if  (selectedItemsPage.classList.contains("selected--item--page--show")) {
-      selectedItemsPage.classList.remove("selected--item--page--show")
+  if  (document.getElementById("selectPrice").classList.contains("select--price--show")) {
+      document.getElementById("selectPrice").classList.remove("select--price--show")
   }
   cartList.push(newElement);
   updateCart(productData)
-  prices.push(productDataPrice)
+  prices.push(Number(productDataPrice) * quantity);
+
 }
 
 const increaseQuantity = (itemName) => {
@@ -1262,7 +1273,7 @@ const decreaseQuantity = (itemName) => {
 const addToCart = (productData, quantity) => {
   quantity = Number(quantity); // Default to 1 if quantity is not provided
     if (productData.Price.split('').length > 3 && productData.Price.split('').length > 4) {
-        openSelectPrice(productData)
+        openSelectPrice(productData, quantity)
         if  (selectedItemsPage.classList.contains("selected--item--page--show")) {
           selectedItemsPage.classList.remove("selected--item--page--show")
       }
@@ -1509,14 +1520,14 @@ function initializeProducts() {
 const pricesList = ["160", "260", "360", "1600"]
 
 let firstClick = 0
-const updatePrice = function(product, number) {
+const updatePrice = function(product, quantity, number) {
   const addPricee = document.getElementById("addPrice")
   addPricee.addEventListener("click", () => {
-    addToCartSelect(product, pricesList[number])
+    addToCartSelect(product, quantity, pricesList[number])
   })
 }
 
-const openSelectPrice = (product) => {
+const openSelectPrice = (product, quantity) => {
   selectPricePage.innerHTML = `
  <div class="select--price--container">
             <div class="content">
@@ -1525,10 +1536,10 @@ const openSelectPrice = (product) => {
                     <h2>${product.ItemName}</h2>
                 </div>
                 <div id="price">
-                    <button class="priceBtn" onclick='updatePrice(${JSON.stringify(product)}, 0)'>160</button>
-                    <button class="priceBtn" onclick='updatePrice(${JSON.stringify(product)}, 1)'>260</button>
-                    <button class="priceBtn" onclick='updatePrice(${JSON.stringify(product)}, 2)'>360</button>
-                    <button class="priceBtn" onclick='updatePrice(${JSON.stringify(product)}, 3)'>1600</button>
+                    <button class="priceBtn" onclick='updatePrice(${JSON.stringify(product)}, ${quantity}, 0)'>160</button>
+                    <button class="priceBtn" onclick='updatePrice(${JSON.stringify(product)}, ${quantity}, 1)'>260</button>
+                    <button class="priceBtn" onclick='updatePrice(${JSON.stringify(product)}, ${quantity}, 2)'>360</button>
+                    <button class="priceBtn" onclick='updatePrice(${JSON.stringify(product)}, ${quantity}, 3)'>1600</button>
                 </div>
                 <div class="buttons">
                     <button id="optionsSelectCancelButton">Cancel</button>

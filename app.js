@@ -1276,7 +1276,6 @@ const addToCart = (productData, quantity) => {
         currentQuantity += quantity;
         const updatedItem = item.replace(/Quantity:\s*\d+/, `Quantity: ${currentQuantity}`)
                     .replace(/Subtotal:\s*₵\d+/, `Subtotal: ₵${Number(productData.Price) * currentQuantity}`)
-                    .replace(/Price: ₵\d+/, `Price: ₵${Number(productData.Price)}`);
         cartList[existingIndex] = updatedItem;
         prices[existingIndex] = Number(productData.Price) * currentQuantity;
         itemList.innerHTML = cartList.join("");
@@ -1294,13 +1293,13 @@ const addToCart = (productData, quantity) => {
                         <span class="item--info">
                             <span class="name">${productData.ItemName}</span>
                             <div>
-                                <span class="price">Price: ₵${Number(productData.Price)*quantity}</span>
+                                <span class="price">Price: ₵${Number(productData.Price)}</span>
                                 <span class="quantity">Quantity: ${quantity}</span>
                                 <span class="subtotal">Subtotal: ₵${Number(productData.Price)*quantity}</span>
                             </div>
                         </span>
                         <span class="list--buttons">
-                            <button class="remove--item">Remove</button>
+                            <button class="remove--item" onclick="removeProductItem('${productData.ItemName}')">Remove</button>
                             <span class="change">
                                 <button class="add--quantity" onclick="increaseQuantity('${productData.ItemName}')">+</button>
                                 <button class="subtract--quantity" onclick="decreaseQuantity('${productData.ItemName}')">-</button>
@@ -1330,13 +1329,22 @@ clearCart.addEventListener("click", () => {
     sum(prices)
 })
 
-const removeItem = (item) => {
-    cartList.splice(-item, 1)
-    itemList.innerHTML = cartList.join("")
-    localStorage.setItem("cartList", JSON.stringify(cartList))
-    updateCart(cartList)
-    prices.splice(-item, 1)
-    sum(prices)
+const removeProductItem = (itemName) => {
+    alert("Are you sure you want to remove this item from the cart?");
+    const itemIndex = cartList.findIndex(item => item.includes(itemName));
+    if (itemIndex !== -1) {
+        cartList.splice(itemIndex, 1);
+        prices.splice(itemIndex, 1); // Remove the corresponding price
+        localStorage.setItem("cartList", JSON.stringify(cartList));
+        itemList.innerHTML = cartList.join("");
+        updateCounterDisplay();
+        sum(prices);
+        if (cartList.length === 0) {
+            itemList.innerHTML = `
+                <li class="empty--message">Cart is Empty</li>
+            `;
+        }
+    }
 }
 
 

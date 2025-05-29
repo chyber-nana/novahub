@@ -783,7 +783,7 @@ const products = [
       "InStock": "TRUE"
     },
     {
-      "ItemName": "Netherlands Physical Sim\n",
+      "ItemName": "Netherlands Physical Sim",
       "ItemCategory": "Foreign Sim Cards",
       "Price": "520",
       "Stock": "30",
@@ -1207,18 +1207,55 @@ const addToCartSelect = (productData, productDataPrice) => {
   prices.push(productDataPrice)
 }
 
-const increaseQuantity = (event) => {
-  const itemElement = event.target.closest('.item');
-  const quantityElement = itemElement.querySelector('.quantity');
-  let quantity = parseInt(quantityElement.textContent.split(': ')[1]);
-  quantity += 1;
-  quantityElement.textContent = `Quantity: ${quantity}`;
-  
-  const priceElement = itemElement.querySelector('.price');
-  const price = parseFloat(priceElement.textContent.split(': ₵')[1]);
-  priceElement.textContent = `Price: ₵${(price / (quantity - 1)) * quantity}`;
-  
-  updateCart(itemElement);
+const increaseQuantity = (itemName) => {
+  const item = cartList.find(element => element.includes(itemName));
+  if (item) { 
+    const quantityMatch = item.match(/Quantity:\s*(\d+)/);
+    const itemPrice = item.match(/Price:\s*₵(\d+)/);
+
+    if (quantityMatch) {
+      const currentQuantity = parseInt(quantityMatch[1], 10);
+      const newQuantity = currentQuantity + 1;
+      const updatedItem = item.replace(/Quantity:\s*\d+/, `Quantity: ${newQuantity}`);
+      const index = cartList.indexOf(item);
+      cartList[index] = updatedItem;
+      const updatedSubtotal = Number(itemPrice ? itemPrice[1] : 0) * newQuantity;
+      const updatedItemWithSubtotal = updatedItem.replace(/Subtotal:\s*₵\d+/, `Subtotal: ₵${updatedSubtotal}`);
+      cartList[index] = updatedItemWithSubtotal;
+      itemList.innerHTML = cartList.join("");
+      localStorage.setItem("cartList", JSON.stringify(cartList));
+      updateCart({ ItemName: itemName, Price: prices[index] });
+      prices[index] = updatedSubtotal; // Update the price for this item
+      sum(prices);
+    }
+  }
+}
+
+const decreaseQuantity = (itemName) => {
+  const item = cartList.find(element => element.includes(itemName));
+  if (item) { 
+    const quantityMatch = item.match(/Quantity:\s*(\d+)/);
+    const itemPrice = item.match(/Price:\s*₵(\d+)/);
+
+    if (quantityMatch) {
+      const currentQuantity = parseInt(quantityMatch[1], 10);
+      if (currentQuantity <= 1) {
+        return; // Prevent decreasing below 1
+      }
+      const newQuantity = currentQuantity - 1;
+      const updatedItem = item.replace(/Quantity:\s*\d+/, `Quantity: ${newQuantity}`);
+      const index = cartList.indexOf(item);
+      cartList[index] = updatedItem;
+      const updatedSubtotal = Number(itemPrice ? itemPrice[1] : 0) * newQuantity;
+      const updatedItemWithSubtotal = updatedItem.replace(/Subtotal:\s*₵\d+/, `Subtotal: ₵${updatedSubtotal}`);
+      cartList[index] = updatedItemWithSubtotal;
+      itemList.innerHTML = cartList.join("");
+      localStorage.setItem("cartList", JSON.stringify(cartList));
+      updateCart({ ItemName: itemName, Price: prices[index] });
+      prices[index] = updatedSubtotal; // Update the price for this item
+      sum(prices);
+    }
+  }
 }
 
 
@@ -1230,6 +1267,28 @@ const addToCart = (productData, quantity) => {
           selectedItemsPage.classList.remove("selected--item--page--show")
       }
     } else {
+      const existingIndex = cartList.findIndex(item => item.includes(productData.ItemName));
+      if (existingIndex !== -1) {
+        // If item already exists in cart, increase its quantity
+        const item = cartList[existingIndex];
+        const quantityMatch = item.match(/Quantity:\s*(\d+)/);
+        let currentQuantity = quantityMatch ? parseInt(quantityMatch[1], 10) : 1;
+        currentQuantity += quantity;
+        const updatedItem = item.replace(/Quantity:\s*\d+/, `Quantity: ${currentQuantity}`)
+                    .replace(/Subtotal:\s*₵\d+/, `Subtotal: ₵${Number(productData.Price) * currentQuantity}`)
+                    .replace(/Price: ₵\d+/, `Price: ₵${Number(productData.Price)}`);
+        cartList[existingIndex] = updatedItem;
+        prices[existingIndex] = Number(productData.Price) * currentQuantity;
+        itemList.innerHTML = cartList.join("");
+        localStorage.setItem("cartList", JSON.stringify(cartList));
+        updateCart(productData);
+        sum(prices);
+        updateCounterDisplay();
+        if  (selectedItemsPage.classList.contains("selected--item--page--show")) {
+          selectedItemsPage.classList.remove("selected--item--page--show")
+        }
+        return;
+      }
       const newElement = `
                     <li class="item">
                         <span class="item--info">
@@ -1237,13 +1296,14 @@ const addToCart = (productData, quantity) => {
                             <div>
                                 <span class="price">Price: ₵${Number(productData.Price)*quantity}</span>
                                 <span class="quantity">Quantity: ${quantity}</span>
+                                <span class="subtotal">Subtotal: ₵${Number(productData.Price)*quantity}</span>
                             </div>
                         </span>
                         <span class="list--buttons">
                             <button class="remove--item">Remove</button>
                             <span class="change">
-                                <button class="add--quantity" onclick="">+</button>
-                                <button class="subtract--quantity" onclick="decreaseQuantity()">-</button>
+                                <button class="add--quantity" onclick="increaseQuantity('${productData.ItemName}')">+</button>
+                                <button class="subtract--quantity" onclick="decreaseQuantity('${productData.ItemName}')">-</button>
                             </span>
                         </span>
                     </li>
@@ -1254,7 +1314,7 @@ const addToCart = (productData, quantity) => {
       }
       cartList.push(newElement);
       updateCart(productData)
-      prices.push(productData.Price)
+      prices.push(Number(productData.Price) * quantity);
     }
 }
 
@@ -1314,6 +1374,7 @@ window.addEventListener("load", () => {
 let data = []
 let yourData = {"data": data}
 
+localStorage.removeItem("productData");
 let storedData = localStorage.getItem("productData");
 if (storedData) {
     yourData.data = JSON.parse(storedData);
@@ -1538,11 +1599,10 @@ const selectItem = (productElement) => {
         quantity = this.value;
 
     })
-    let quantityNew = quantity ? quantity : 1; // Default to 1 if quantity is not set
 
     selectedItemsPage.getElementsByClassName("selected--items--buttons")[0].innerHTML = `
-        <button class="cancel--selection" onclick='hideSelection()' id="selected--close--button">Cancel</button>
-        <button class="add--selection" onclick='addToCart(${JSON.stringify(productData)}, ${quantityNew})'>Add to Cart</button>
+      <button class="cancel--selection" onclick='hideSelection()' id="selected--close--button">Cancel</button>
+      <button class="add--selection" onclick='addToCart(${JSON.stringify(productData)}, document.getElementById("quantityNumber").value)'>Add to Cart</button>
     `;
     selectedItemsPage.classList.add("selected--item--page--show");
 };

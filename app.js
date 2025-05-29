@@ -10,7 +10,7 @@ const itemsHidden = document.querySelector(".item--list--hidden")
 const cartCloseButton = document.getElementById("cart--close--button")
 const searchBar = document.getElementById("search")
 const orderButtton = document.getElementById("order")
-const itemList = document.querySelector(".items--list")
+const itemList = document.querySelector(".items")
 const selectedItemsPage = document.querySelector(".selected--item--page")
 const clearCart = document.querySelector(".clear--cart")
 const searchedList = document.getElementById("searchedList")
@@ -1131,7 +1131,7 @@ const removeButton = []
 cart.addEventListener("click", () => {
     sum(prices)
     itemsHidden.classList.add("item--list--show")
-    removeButton = document.querySelectorAll("#removeButton")
+    // removeButton = document.querySelectorAll("#removeButton")
 
 })
 
@@ -1181,16 +1181,7 @@ const notify = (message) => {
 }
 
 const updateCart = (productData) => {
-    itemList.innerHTML = `
-                            <tr class="title--header">
-                            <td class="item--name">Product</td>
-                            <td class="item--price">Price</td>
-                            <td class="item--quantity">
-                                Quantity
-                            </td>
-                            <td class="item--subtotal">Subtotal</td>
-                        </tr>
-    `
+    itemList.innerHTML = ''
     itemList.innerHTML += cartList.join("");
     localStorage.setItem("cartList", JSON.stringify(cartList));
     notify(productData.ItemName);
@@ -1216,9 +1207,23 @@ const addToCartSelect = (productData, productDataPrice) => {
   prices.push(productDataPrice)
 }
 
+const increaseQuantity = (event) => {
+  const itemElement = event.target.closest('.item');
+  const quantityElement = itemElement.querySelector('.quantity');
+  let quantity = parseInt(quantityElement.textContent.split(': ')[1]);
+  quantity += 1;
+  quantityElement.textContent = `Quantity: ${quantity}`;
+  
+  const priceElement = itemElement.querySelector('.price');
+  const price = parseFloat(priceElement.textContent.split(': ₵')[1]);
+  priceElement.textContent = `Price: ₵${(price / (quantity - 1)) * quantity}`;
+  
+  updateCart(itemElement);
+}
+
 
 const addToCart = (productData, quantity) => {
-  quantity = Number(quantity) || 1; // Default to 1 if quantity is not provided
+  quantity = Number(quantity); // Default to 1 if quantity is not provided
     if (productData.Price.split('').length > 3 && productData.Price.split('').length > 4) {
         openSelectPrice(productData)
         if  (selectedItemsPage.classList.contains("selected--item--page--show")) {
@@ -1226,19 +1231,22 @@ const addToCart = (productData, quantity) => {
       }
     } else {
       const newElement = `
-                          <tr class="item">
-                            <td class="item--name">
-                                                  <div class="closee" onclick="removeItem(${removeButton.length})">
-      <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="24px" height="24px" stroke="#fff" stroke-width="1" id="removeButton""><path d="M 19.990234 2.9863281 A 1.0001 1.0001 0 0 0 19.292969 3.2929688 L 12 10.585938 L 4.7070312 3.2929688 A 1.0001 1.0001 0 0 0 3.9902344 2.9902344 A 1.0001 1.0001 0 0 0 3.2929688 4.7070312 L 10.585938 12 L 3.2929688 19.292969 A 1.0001 1.0001 0 1 0 4.7070312 20.707031 L 12 13.414062 L 19.292969 20.707031 A 1.0001 1.0001 0 1 0 20.707031 19.292969 L 13.414062 12 L 20.707031 4.7070312 A 1.0001 1.0001 0 0 0 19.990234 2.9863281 z"/></svg>
-      </div>
-                            <span>${productData.ItemName}</span>
-                            </td>
-                            <td class="item--price">${productData.Price}</td>
-                            <td class="item--quantity">
-                            <input type="number" value="${quantity}" min="1" class="item--quantity--input" onchange="addToCartSelect(${JSON.stringify(productData)}, this.value)">
-                            </td>
-                            <td class="item--subtotal">${quantity * Number(productData.Price)}</td>
-                        </tr>
+                    <li class="item">
+                        <span class="item--info">
+                            <span class="name">${productData.ItemName}</span>
+                            <div>
+                                <span class="price">Price: ₵${Number(productData.Price)*quantity}</span>
+                                <span class="quantity">Quantity: ${quantity}</span>
+                            </div>
+                        </span>
+                        <span class="list--buttons">
+                            <button class="remove--item">Remove</button>
+                            <span class="change">
+                                <button class="add--quantity" onclick="">+</button>
+                                <button class="subtract--quantity" onclick="decreaseQuantity()">-</button>
+                            </span>
+                        </span>
+                    </li>
       `;
       
       if  (selectedItemsPage.classList.contains("selected--item--page--show")) {
@@ -1255,14 +1263,8 @@ clearCart.addEventListener("click", () => {
     prices = []
     localStorage.setItem("cartList", JSON.stringify(cartList));
     itemList.innerHTML = `
-                            <tr class="title--header">
-                            <td class="item--name">Product</td>
-                            <td class="item--price">Price</td>
-                            <td class="item--quantity">
-                                Quantity
-                            </td>
-                            <td class="item--subtotal">Subtotal</td>
-                        </tr>
+                    <li class="empty--message">Cart is Empty</li>
+
     `
     updateCounterDisplay();
     sum(prices)
@@ -1508,6 +1510,8 @@ const hideSelection = () => {
   selectedItemsPage.classList.remove("selected--item--page--show");
 };
 
+let quantity = 0
+
 
 
 const selectItem = (productElement) => {
@@ -1525,9 +1529,20 @@ const selectItem = (productElement) => {
         Quantity: ${productData.Stock}
         </span>
     `;
+
+    selectedItemsPage.getElementsByClassName("quantitySelect")[0].innerHTML = `
+    <span>Quantity: </span>
+                  <input type="number" value="1" name="quantityNumber" id="quantityNumber" title="Quantity" min="1">
+    `
+    document.getElementById("quantityNumber").addEventListener("change", () => {
+        quantity = this.value;
+
+    })
+    let quantityNew = quantity ? quantity : 1; // Default to 1 if quantity is not set
+
     selectedItemsPage.getElementsByClassName("selected--items--buttons")[0].innerHTML = `
         <button class="cancel--selection" onclick='hideSelection()' id="selected--close--button">Cancel</button>
-        <button class="add--selection" onclick='addToCart(${JSON.stringify(productData)})'>Add to Cart</button>
+        <button class="add--selection" onclick='addToCart(${JSON.stringify(productData)}, ${quantityNew})'>Add to Cart</button>
     `;
     selectedItemsPage.classList.add("selected--item--page--show");
 };

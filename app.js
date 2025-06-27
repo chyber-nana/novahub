@@ -2,6 +2,7 @@ const play = document.getElementById("play")
 const playText = ["Here, we provide fast and reliable services to our customers!", "No need to register!", "Just select items and speak to us directly!"]
 const menuBar = document.getElementById("menubar")
 const menu = document.getElementById("menu")
+const cartPage = document.querySelector(".items--container")
 const linkList = document.querySelectorAll(".link")
 const notificationPopup = document.querySelector(".notification")
 const cart = document.getElementById("cart")
@@ -17,6 +18,8 @@ const searchedList = document.getElementById("searchedList")
 const counterDisplay = document.querySelectorAll("#counter")
 const selectPricePage = document.getElementById("selectPrice")
 const el = document.getElementById("price")
+const allCategories = document.getElementById("allCategories")
+const categoryContainer = document.querySelector("#categories--container")
 
 let counter = 0
 let cartList = []
@@ -24,6 +27,25 @@ let searchList = []
 let inCart = false
 let startingAnimation = true
 let prices = []
+
+allCategories.addEventListener("click", (event) => {
+  if (!categoryContainer.contains(event.target)) {
+    allCategories.classList.remove("allCategories")
+  }
+});
+
+const stuffs = document.querySelectorAll("category")
+const productsButton = document.querySelector(".productsButton")
+
+stuffs.forEach(element => {
+  element.addEventListener("click", () => {
+    allCategories.classList.remove("allCategories")
+  })
+});
+
+productsButton.addEventListener("click", () => {
+  allCategories.classList.add("allCategories")
+})
 
 const products = [
     {
@@ -1158,6 +1180,18 @@ linkList.forEach(element => {
     }) 
 
 });
+
+
+document.addEventListener("click", (e) => {
+  if (!menu.contains(e.target) && !menuBar.contains(e.target) && menu.classList.contains("item-show")) {
+    menu.classList.remove("item-show")
+    menuBar.classList.toggle("actif")
+  }
+
+  if (!cartPage.contains(e.target) && !cart.contains(e.target) && itemsHidden.classList.contains("item--list--show")) {
+    itemsHidden.classList.remove("item--list--show") 
+  }
+})
 
 cartCloseButton.addEventListener("click", () => {
     inCart = false

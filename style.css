@@ -33,6 +33,11 @@
     src: url("./Fonts/Roboto-VariableFont_wdth\,wght.ttf") format("truetype");
 }
 
+@font-face {
+    font-family: "Quicksand";
+    src: url("./Fonts/Quicksand-VariableFont_wght.ttf");
+}
+
 
 * {
     margin: 0;
@@ -126,14 +131,15 @@ main#everything {
 }
 
 .name--text a.inactive {
-    background: #ff6e7f; 
+    /* background: #ff6e7f; 
     background: -webkit-linear-gradient(to right, #bfe9ff, #ff6e7f);
     background: linear-gradient(to right, #bfe9ff, #ff6e7f); 
     -moz-background-clip: text;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    -moz-text-fill-color: transparent;
+    -moz-text-fill-color: transparent; */
+    color: grey;
     font-size: 2.5rem;
     text-align: center;
     font-family: "Monoton";
@@ -189,15 +195,8 @@ h1 {
 
 
 .welcome--page.pages .content .left .content span {
-    background: #ff6e7f;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #bfe9ff, #ff6e7f);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #bfe9ff, #ff6e7f); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */          
-    -moz-background-clip: text;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -moz-text-fill-color: transparent;
-    -webkit-text-fill-color: transparent;
-    font-family: "Monoton";
+    color: grey;
+    font-family: "Montserrat";
     font-size: 8rem;
 }
 
@@ -211,6 +210,76 @@ h1 {
     align-items: center;
     justify-content: space-evenly;
     position: relative;
+}
+
+
+.allCategoriesHidden {
+    display: none;
+}
+
+.allCategories {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.allCategories .container {
+    width: 50vw;
+    max-width: 640px;
+    height: 300px;
+    /* display: flex; */
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #171717;
+    padding: 20px;
+}
+
+.allCategories .container h1 {
+    font-size: 2.5rem;
+    font-family: "Rosca";
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.allCategories .container ul.categories {
+    width: 100%;
+    height: 100%;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-rows: repeat(auto-fit, 120px);
+    place-items: center;
+}
+
+.category a {
+    text-decoration: none;
+    color: White;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: all .35s ease-in-out;
+}
+
+.category a:hover {
+    background-color: #ffffff8d;
+    transition: all .35s ease-in-out;
+}
+
+
+.allCategories .container  .categories .category {
+    width: 90%;
+    height: 100px;
+    background-color: #1f201f5d;
+    cursor: pointer;
 }
 
 .main--info .start {
@@ -557,7 +626,7 @@ svg {
 
 .products li {
     cursor: pointer;
-    width: 250px;
+    width: 200px;
     height: 300px;
     transition: all .35s ease-in-out;
     display: flex;
@@ -1461,6 +1530,21 @@ ul.searched--list::-webkit-scrollbar-track {
     transition: all .25s ease-in-out;
 }
 
+#allOrders {
+    text-decoration: underline;
+    color: White;
+    font-size: 1.25rem;
+    font-family: "Quicksand";
+    display: flex;
+    align-items: center;
+}
+
+#allOrders:hover, #allOrders:hover svg {
+    fill: coral;
+    color: coral;
+    transition: all .35s ease-in-out;
+}
+
 @media screen and (max-width: 1330px) {
     .welcome--page.pages .content .left .content span {
         font-size: 5rem;
@@ -1486,7 +1570,7 @@ ul.searched--list::-webkit-scrollbar-track {
 
     .products li {
         cursor: pointer;
-        width: 200px;
+        width: 150px;
         height: 300px;
         transition: all .35s ease-in-out;
         display: flex;
@@ -1535,6 +1619,18 @@ ul.searched--list::-webkit-scrollbar-track {
         margin-bottom: 5px;
         /* overflow-x: hidden; */
         border-radius: 5px;
+    }
+
+    .products li {
+        cursor: pointer;
+        width: 200px;
+        height: 300px;
+        transition: all .35s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;   
+        font-family: "Outfit";
     }
 
     .pages .container .content .main--label {
@@ -1591,9 +1687,9 @@ ul.searched--list::-webkit-scrollbar-track {
 #customBody nav.navbar .nav--container .nav--content .name--text {
     width: 100%;
     height: 100%;
-    font-size: 2.5rem;
+    font-size: 2rem;
     text-align: center;
-    font-family: "Monoton";
+    font-family: "Montserrat";
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -1601,15 +1697,19 @@ ul.searched--list::-webkit-scrollbar-track {
 }
 
 #customBody .name--text a {
-    background: #ff6e7f; 
+    /* background: #ff6e7f; 
     background: -webkit-linear-gradient(to right, #bfe9ff, #ff6e7f);
-    background: linear-gradient(to right, #bfe9ff, #ff6e7f); 
-    -moz-background-clip: text;
+    background: linear-gradient(to right, #bfe9ff, #ff6e7f);  */
+    color: grey;
+    /* -moz-background-clip: text;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    -moz-text-fill-color: transparent;
+    -moz-text-fill-color: transparent; */
     margin-left: 10%;
+    text-decoration: none;
+    font-family: "Quicksand";
+    font-weight: 700;
 }
 
 
@@ -1634,6 +1734,10 @@ ul.searched--list::-webkit-scrollbar-track {
     justify-content: space-evenly;
 }
 
+#customBody main h1 {
+    font-family: "Quicksand";
+}
+
 form {
     height: 80%;
     width: 500px;
@@ -1642,6 +1746,23 @@ form {
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
+    background-color: #3f3f3fb0;
+    border-radius: 20px;
+}
+
+form div {
+    background-color: #ffffffa6;
+    color: #000;
+    border-radius: 12px;
+    width: 70%;
+}
+
+form label {
+    font-size: 1rem;
+    text-indent: 10px;
+    width: 100%;
+    display: block;
+    font-weight: 600;
 }
 
 form input[type="text"], input[type="email"] {
@@ -1652,6 +1773,7 @@ form input[type="text"], input[type="email"] {
     text-indent: 10px;
     border: none;
     transition: border .15s ease-in-out;
+    background-color: transparent;
 }
 
 form textarea {
@@ -1662,22 +1784,12 @@ form textarea {
     text-indent: 10px;
     transition: border .15s ease-in-out;
     resize: none;
+    border: none;
+    background-color: transparent;
+    transition: all .35s ease-in-out;
+
 }
 
-textarea:focus {
-    border: 2px solid #75abc3;
-    text-align: center;
-    transition: border .05s ease-in-out;
-}
-
-input[type="text"]:focus, input[type="email"]:focus {
-    border: 2px solid #75abc3;
-    transition: border .05s ease-in-out;
-}
-
-label {
-    font-size: 12px;
-}
 
 #customBody button[type="submit"] {
     width: 40%;
@@ -1688,11 +1800,14 @@ label {
     color: var(--accentColor);
     cursor: pointer;
     font-size: 1rem;
-    background: #FF0099;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #493240, #FF0099);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #493240, #FF0099); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    
+    background-color: #8f8c9c;
+    transition: all .35s ease-in-out;
+    font-family: "Quicksand";
+}
 
+#customBody button[type="submit"]:hover {
+    background-color: #6b03c0;
+    transition: all .35s ease-in-out;
 }
 
 #customBody img  {
@@ -1776,7 +1891,7 @@ label {
     }
 
     .right h1 {
-        text-align: left;
+        text-align: center;
     }
 
     .welcome--page.pages .content .left .content {
@@ -1884,14 +1999,15 @@ label {
     }
 
     .name--text a.inactive {
-        background: #ff6e7f; 
+        /* background: #ff6e7f; 
         background: -webkit-linear-gradient(to right, #bfe9ff, #ff6e7f);
         background: linear-gradient(to right, #bfe9ff, #ff6e7f); 
         -moz-background-clip: text;
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
-        -moz-text-fill-color: transparent;
+        -moz-text-fill-color: transparent; */
+        color: grey;
         font-size: 1.5rem;
         text-align: center;
         font-family: "Monoton";

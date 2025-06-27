@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Page || Novahub</title>
+    <link rel="stylesheet" href="orderpage.css">
+</head>
+<body>
+    <nav>
+        <a href="index.html">Novahub</a>
+        <span class="username">Nii</span>
+    </nav>
+
+    <div class="orderTable" id="orderTable">
+        <div id="tab">
+            <span id="passiveTab" class="tabItem">Passive Order(s)</span>
+            <span id="activeTab" class="tabItem">Active Order(s)</span>
+        </div>
+        <div id="mover">
+            <div class="container" id="move">
+                <div class="passiveOrders">
+                    <div class="headings">
+                        <h2>Passive Orders</h2>
+                        <p>These are orders that have been completed or are no longer active.</p>
+                    </div>
+                    <ul id="passiveOrderList">
+                        <li>
+                            <div class="product">
+                                <span class="productName">Product A</span>
+                                <span class="productQuantity">Quantity: 2</span>
+                                <span class="price">Price:  $343</span>
+                            </div>
+                            <div class="status">
+                                <span class="statusText">Status: Completed</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="activeOrders">
+                    <div class="headings">
+                        <h2>Active Orders</h2>
+                        <p>These are current orders that are being processed.</p>
+                    </div>
+                    <ul id="activeOrderList">
+                        <li>
+                            <div class="product">
+                                <span class="productName">Product A</span>
+                                <span class="productQuantity">Quantity: 2</span>
+                                <span class="price">Price:  $343</span>
+                            </div>
+                            <div class="status">
+                                <span class="statusText">Status: Processing</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+    <form action="/submit-order" method="POST">
+            
+        <label for="name">Customer Name:</label>
+        <input type="text" id="name" name="name" placeholder="Your Full name" required>
+        <label for="product">Products</label>
+        <ul class="orderProducts">
+            <li>sd</li>
+            <li>cs</li>
+            <li>h</li>
+            <li>j</li>
+            <li>sd</li>
+            <li>cs</li>
+            <li>h</li>
+            <li>j</li>
+        </ul>
+        <p>Please confirm these orders!</p>
+        
+        <button type="submit">Place Order</button>
+    </form>
+
+    <footer>
+        <p>&copy; 2025 Novahub. All rights reserved.</p>
+    </footer>
+</body>
+<script src="orderpage.js"></script>
+</html>

@@ -1202,6 +1202,9 @@ cartCloseButton.addEventListener("click", () => {
 orderButtton.addEventListener("click", () => {
     if (cartList.length === 0) {
         alert("No items have been selected!")
+    } else {
+      window.location.href = "orderpage.html";
+      
     }
 })
 

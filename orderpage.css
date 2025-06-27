@@ -111,7 +111,6 @@ a {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    background-color: #4c4e4c;
 }
 
 .passiveOrders p {
@@ -144,19 +143,23 @@ a {
 }
 
 #tab {
-    width: 100%;
+    width: 30vw;
+    min-width: 300px;
+    background-color: #535252;
     height: 3rem;
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-evenly;   
+    justify-content: space-between;   
+    border-radius: 20px;
+    padding: 5px;
 }
 
 .tabItem {
     cursor: pointer;
     color: #fff;
     height: 100%;
-    width: 45%;
+    width: 100%;
     max-width: 300px;
     text-align: center;
     display: grid;
@@ -164,13 +167,13 @@ a {
     font-weight: 700;
     place-items: center;
     transition: all .35s ease-in-out;
-    border-radius: 12px;
+    border-radius: 20px;
 }
 
 #mover h2 {
     width: 100%;
     text-align: left;
-    text-indent: 10px;
+    margin-left: 50px;
     color: #fff;
 }
 
@@ -181,32 +184,48 @@ a {
     width: 100%;
     padding: 7px;
     text-align: left;
-    text-indent: 10px;
+    margin-left: 50px;
     align-self: flex-start;
 
 }
 
 #passiveTab {
-    background-color: #e7e7e7b7;
+    background-color: #fff;
+    color: #000;
 }
 
 #activeTab {
-    background-color: #bcb8b85b;
+    background-color: transparent;
+    color: #fff;
 }
 
 .active #passiveTab {
-    background-color: #bcb8b85b;
+    background-color: transparent;
+    color: #fff;
 }
 
 .active #activeTab {
-    background-color: #e7e7e7b7;
+    background-color: #fff;
+    color: #000;
 }
 
-#activeTab:hover, #passiveTab:hover {
+.active #activeTab:hover {
+    color: #000;
+    background-color: white;
+}
+
+#passiveTab:hover {
+    color: #000;
+    background-color: white;
+}
+
+#activeTab:hover,.active #passiveTab:hover {
     background-color: #bcb8b81f;
     color: #fff;
     transition: all .35s ease-in-out;
 }
+
+
 
 #mover {
     width: 100%;
@@ -233,13 +252,13 @@ a {
 #activeOrderList {
     width: 100%;
     height: 70%;
-    background-color: #ffffff68;
+    /* background-color: #ffffff68; */
 }
 
 #passiveOrderList {
     width: 100%;
     height: 70%;
-    background-color: #ffffff68;
+    /* background-color: #ffffff68; */
 }
 
 footer {
@@ -330,4 +349,45 @@ button[type="submit"] {
     border-radius: 12px;
     border: none;
     cursor: pointer;
+}
+
+table {
+    width: 90%;
+    max-width: 1000px;
+    border-collapse: collapse;
+    background-color: #4c4e4c;
+    margin-top: 40px;
+}
+
+table th {
+    color: #fff;
+    font-weight: 600;
+    text-align: left;
+    background-color: #343434;
+}
+
+table th:nth-child(2) {
+    width: 100px;
+}
+
+table tr td:nth-child(2) {
+    width: 100px;
+}
+
+table th, table td {
+    padding: 10px;
+}
+
+table td {
+    color: #fff;
+    text-align: left;
+}
+
+
+table tr:nth-of-type(2n) {
+    background-color: #ffffff1f;
+}
+
+table tr {
+    height: 50px;
 }

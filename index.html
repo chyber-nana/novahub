@@ -90,6 +90,10 @@
                 </div>
             </div>
         </div>
+
+        <a href="index.html" id="homeButton" title="Home">
+            <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="24px" height="24px"><path d="M 23.951172 4 A 1.50015 1.50015 0 0 0 23.072266 4.3222656 L 8.859375 15.519531 C 7.0554772 16.941163 6 19.113506 6 21.410156 L 6 40.5 C 6 41.863594 7.1364058 43 8.5 43 L 18.5 43 C 19.863594 43 21 41.863594 21 40.5 L 21 30.5 C 21 30.204955 21.204955 30 21.5 30 L 26.5 30 C 26.795045 30 27 30.204955 27 30.5 L 27 40.5 C 27 41.863594 28.136406 43 29.5 43 L 39.5 43 C 40.863594 43 42 41.863594 42 40.5 L 42 21.410156 C 42 19.113506 40.944523 16.941163 39.140625 15.519531 L 24.927734 4.3222656 A 1.50015 1.50015 0 0 0 23.951172 4 z M 24 7.4101562 L 37.285156 17.876953 C 38.369258 18.731322 39 20.030807 39 21.410156 L 39 40 L 30 40 L 30 30.5 C 30 28.585045 28.414955 27 26.5 27 L 21.5 27 C 19.585045 27 18 28.585045 18 30.5 L 18 40 L 9 40 L 9 21.410156 C 9 20.030807 9.6307412 18.731322 10.714844 17.876953 L 24 7.4101562 z"/></svg>
+        </a>
         
         <div class="pages" id="foreignSim">
             <div class="container">
@@ -267,7 +271,7 @@
             <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="24px" height="24px" id="cart--close--button" stroke="#fff" stroke-width="1"><path d="M 19.990234 2.9863281 A 1.0001 1.0001 0 0 0 19.292969 3.2929688 L 12 10.585938 L 4.7070312 3.2929688 A 1.0001 1.0001 0 0 0 3.9902344 2.9902344 A 1.0001 1.0001 0 0 0 3.2929688 4.7070312 L 10.585938 12 L 3.2929688 19.292969 A 1.0001 1.0001 0 1 0 4.7070312 20.707031 L 12 13.414062 L 19.292969 20.707031 A 1.0001 1.0001 0 1 0 20.707031 19.292969 L 13.414062 12 L 20.707031 4.7070312 A 1.0001 1.0001 0 0 0 19.990234 2.9863281 z"/></svg>
             <div class="items--content">
                 <h1>Cart</h1>
-                <ul class="items">
+                <ul class="items" id="cartItems">
                     <li class="empty--message">Cart is Empty</li>
                     <!-- <li class="item">
                         <span class="item--info">
@@ -298,7 +302,26 @@
             </div>
         </div>
     </div>
-    <script src="app.js"></script>
+    <form action="/submit-order" method="POST" id="orderForm">
+            
+        <label for="name">Customer Name:</label>
+        <input type="text" id="name" name="name" placeholder="Your Full name" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email-address" name="email" placeholder="Your Email" required>
+        <label for="product">Products</label>
+        <ul class="orderProducts" id="orderProducts">
 
+        </ul>
+        <p>Please confirm these orders!</p>
+        <span class="total--price" id="amount">Total price: ₵0</span>
+        <div class="buttons">
+            <button class="cancelText" id="orderFormCancel" title="Cancel" type="button">Cancel</button>
+            <button type="submit" onclick="payWithPaystack()">Place Order</button>
+        </div>
+    </form>
+    
+    <script src="app.js"></script>
+    <script src="https://js.paystack.co/v2/inline.js"></script>
+    <!-- <script src="cross.js"></script> -->
 </body>
 </html>

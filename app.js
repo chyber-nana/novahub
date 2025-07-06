@@ -10,7 +10,7 @@ const itemsHidden = document.querySelector(".item--list--hidden")
 // const logo = document.querySelector(".inactive")
 const cartCloseButton = document.getElementById("cart--close--button")
 const searchBar = document.getElementById("search")
-const orderButtton = document.getElementById("order")
+const orderButton = document.getElementById("order")
 const itemList = document.querySelector(".items")
 const selectedItemsPage = document.querySelector(".selected--item--page")
 const clearCart = document.querySelector(".clear--cart")
@@ -20,13 +20,53 @@ const selectPricePage = document.getElementById("selectPrice")
 const el = document.getElementById("price")
 const allCategories = document.getElementById("allCategories")
 const categoryContainer = document.querySelector("#categories--container")
+const orderFormCancel = document.getElementById("orderFormCancel")
 
 let counter = 0
 let cartList = []
+let cartListItems = []
+let prices = []
 let searchList = []
 let inCart = false
 let startingAnimation = true
-let prices = []
+
+const orderProducts = document.getElementById("orderProducts")
+const orderForm = document.getElementById("orderForm")
+
+orderButton.addEventListener("click", () => {
+    if (cartList.length === 0) {
+        alert("No items have been selected!")
+    } else {
+      orderForm.classList.add("state")
+      itemsHidden.classList.remove("item--list--show")
+
+      for (let items = 0; items < cartList.length; items++) {
+        // Find the product data using the product name from cartListItems
+        let productName = cartListItems[items][0];
+
+        // Extract quantity from cartList HTML string
+        let quantity = cartListItems[items][2]
+
+        // Get price from productData
+        let price = cartListItems[items][1]
+        let subtotal = price * quantity;
+
+        orderProducts.innerHTML += `
+        <li class="order--item">
+          <span class="order--item--name">${productName}</span>
+          <span class="order--item--price">₵${price}</span>
+          <span class="order--item--quantity">${quantity}</span>
+          <span class="order--item--total">₵${subtotal}</span>
+        </li>`;
+      }
+
+    }
+})
+
+orderFormCancel.addEventListener("click", () => {
+  orderForm.classList.remove("state")
+  orderProducts.innerHTML = ""
+})
 
 allCategories.addEventListener("click", (event) => {
   if (!categoryContainer.contains(event.target)) {
@@ -1141,11 +1181,18 @@ setInterval(() => {
 
 const sum = function(list) {
     let total = 0
-    list.forEach(amount => {
-        total += Number(amount)
-    })
+    if (list !== null && list.length > 0) {
+      list.forEach(amount => {
+          total += Number(amount)
+      })
+      localStorage.setItem("prices", JSON.stringify(list))
+    }
 
-    document.querySelector(".total--price").innerHTML = `Total Price: ₵${total}`
+
+    document.querySelectorAll(".total--price").forEach(element => {
+        element.innerHTML = `Total: ₵${total.toFixed(2)}`
+    })
+    return total
 }
 
 const removeButton = []
@@ -1198,16 +1245,6 @@ cartCloseButton.addEventListener("click", () => {
     itemsHidden.classList.remove("item--list--show")
 })
 
-
-orderButtton.addEventListener("click", () => {
-    if (cartList.length === 0) {
-        alert("No items have been selected!")
-    } else {
-      window.location.href = "orderpage.html";
-      
-    }
-})
-
 const notify = (message) => {
     document.getElementById("message").innerHTML = `Added ${message}`
 
@@ -1221,6 +1258,8 @@ const updateCart = (productData) => {
     itemList.innerHTML = ''
     itemList.innerHTML += cartList.join("");
     localStorage.setItem("cartList", JSON.stringify(cartList));
+    localStorage.setItem("cartListItems", JSON.stringify(cartListItems));
+    localStorage.setItem("prices", JSON.stringify(prices));
     notify(productData.ItemName);
     updateCounterDisplay();
 };
@@ -1250,30 +1289,44 @@ const addToCartSelect = (productData, quantity, productDataPrice) => {
       document.getElementById("selectPrice").classList.remove("select--price--show")
   }
   cartList.push(newElement);
+  cartListItems.push([productData.ItemName, productDataPrice, quantity]);
   updateCart(productData)
   prices.push(Number(productDataPrice) * quantity);
+  localStorage.setItem("prices", JSON.stringify(prices));
 
 }
 
 const increaseQuantity = (itemName) => {
   const item = cartList.find(element => element.includes(itemName));
+  const item2 = cartListItems.find(element => element[0] === itemName);
   if (item) { 
+
     const quantityMatch = item.match(/Quantity:\s*(\d+)/);
+    const quantityMatch2 = item2 ? item2[2] : null; // Get quantity from cartListItems
     const itemPrice = item.match(/Price:\s*₵(\d+)/);
 
     if (quantityMatch) {
       const currentQuantity = parseInt(quantityMatch[1], 10);
+      const currentQuantity2 = quantityMatch2 ? parseInt(quantityMatch2, 10) : 1; // Default to 1 if not found
       const newQuantity = currentQuantity + 1;
+      const newQuantity2 = currentQuantity2 + 1; // Increment the quantity from cartListItems
       const updatedItem = item.replace(/Quantity:\s*\d+/, `Quantity: ${newQuantity}`);
+      const updatedItem2 = item2 ? item2[0].replace(/Quantity:\s*\d+/, `Quantity: ${newQuantity2}`) : null; // Update quantity in cartListItems
       const index = cartList.indexOf(item);
+      const index2 = cartListItems.indexOf(item2);
       cartList[index] = updatedItem;
+      if (index2 !== -1 && updatedItem2) {
+        cartListItems[index2] = [itemName, itemPrice ? itemPrice[1] : "0", newQuantity2]; // Update the cartListItems with new quantity
+      }
       const updatedSubtotal = Number(itemPrice ? itemPrice[1] : 0) * newQuantity;
       const updatedItemWithSubtotal = updatedItem.replace(/Subtotal:\s*₵\d+/, `Subtotal: ₵${updatedSubtotal}`);
       cartList[index] = updatedItemWithSubtotal;
       itemList.innerHTML = cartList.join("");
       localStorage.setItem("cartList", JSON.stringify(cartList));
+      localStorage.setItem("cartListItems", JSON.stringify(cartListItems));
       updateCart({ ItemName: itemName, Price: prices[index] });
       prices[index] = updatedSubtotal; // Update the price for this item
+      localStorage.setItem("prices", JSON.stringify(prices));
       sum(prices);
     }
   }
@@ -1281,26 +1334,40 @@ const increaseQuantity = (itemName) => {
 
 const decreaseQuantity = (itemName) => {
   const item = cartList.find(element => element.includes(itemName));
+  const item2 = cartListItems.find(element => element[0] === itemName);
   if (item) { 
     const quantityMatch = item.match(/Quantity:\s*(\d+)/);
+    const quantityMatch2 = item2 ? item2[2] : null; // Get quantity from cartListItems
     const itemPrice = item.match(/Price:\s*₵(\d+)/);
 
     if (quantityMatch) {
+      const currentQuantity2 = quantityMatch2 ? parseInt(quantityMatch2, 10) : 1; // Default to 1 if not found
       const currentQuantity = parseInt(quantityMatch[1], 10);
       if (currentQuantity <= 1) {
         return; // Prevent decreasing below 1
       }
+      if (currentQuantity2 <= 1) {
+        return; // Prevent decreasing below 1 in cartListItems
+      }
       const newQuantity = currentQuantity - 1;
+      const newQuantity2 = currentQuantity2 - 1; // Decrement the quantity from cartListItems
       const updatedItem = item.replace(/Quantity:\s*\d+/, `Quantity: ${newQuantity}`);
+      const updatedItem2 = item2 ? item2[0].replace(/Quantity:\s*\d+/, `Quantity: ${newQuantity2}`) : null; // Update quantity in cartListItems
       const index = cartList.indexOf(item);
+      const index2 = cartListItems.indexOf(item2);
       cartList[index] = updatedItem;
+      if (index2 !== -1 && updatedItem2) {
+        cartListItems[index2] = [itemName, itemPrice ? itemPrice[1] : "0", newQuantity2]; // Update the cartListItems with new quantity
+      }
       const updatedSubtotal = Number(itemPrice ? itemPrice[1] : 0) * newQuantity;
       const updatedItemWithSubtotal = updatedItem.replace(/Subtotal:\s*₵\d+/, `Subtotal: ₵${updatedSubtotal}`);
       cartList[index] = updatedItemWithSubtotal;
       itemList.innerHTML = cartList.join("");
       localStorage.setItem("cartList", JSON.stringify(cartList));
+      localStorage.setItem("cartListItems", JSON.stringify(cartListItems));
       updateCart({ ItemName: itemName, Price: prices[index] });
       prices[index] = updatedSubtotal; // Update the price for this item
+      localStorage.setItem("prices", JSON.stringify(prices));
       sum(prices);
     }
   }
@@ -1326,6 +1393,8 @@ const addToCart = (productData, quantity) => {
                     .replace(/Subtotal:\s*₵\d+/, `Subtotal: ₵${Number(productData.Price) * currentQuantity}`)
         cartList[existingIndex] = updatedItem;
         prices[existingIndex] = Number(productData.Price) * currentQuantity;
+        localStorage.setItem("cartListItems", JSON.stringify(cartListItems));
+        localStorage.setItem("prices", JSON.stringify(prices));
         itemList.innerHTML = cartList.join("");
         localStorage.setItem("cartList", JSON.stringify(cartList));
         updateCart(productData);
@@ -1360,15 +1429,21 @@ const addToCart = (productData, quantity) => {
           selectedItemsPage.classList.remove("selected--item--page--show")
       }
       cartList.push(newElement);
+      cartListItems.push([productData.ItemName, productData.Price, quantity]);
       updateCart(productData)
       prices.push(Number(productData.Price) * quantity);
+      localStorage.setItem("prices", JSON.stringify(prices));
+
     }
 }
 
 clearCart.addEventListener("click", () => {
     cartList = [];
+    cartListItems = []
     prices = []
     localStorage.setItem("cartList", JSON.stringify(cartList));
+    localStorage.setItem("cartListItems", JSON.stringify(cartListItems));
+    localStorage.setItem("prices", JSON.stringify(prices));
     itemList.innerHTML = `
                     <li class="empty--message">Cart is Empty</li>
 
@@ -1382,8 +1457,11 @@ const removeProductItem = (itemName) => {
     const itemIndex = cartList.findIndex(item => item.includes(itemName));
     if (itemIndex !== -1) {
         cartList.splice(itemIndex, 1);
+        cartListItems.splice(itemIndex, 1); // Remove the corresponding item name
         prices.splice(itemIndex, 1); // Remove the corresponding price
         localStorage.setItem("cartList", JSON.stringify(cartList));
+        localStorage.setItem("cartListItems", JSON.stringify(cartListItems));
+        localStorage.setItem("prices", JSON.stringify(prices));
         itemList.innerHTML = cartList.join("");
         updateCounterDisplay();
         sum(prices);
@@ -1415,8 +1493,13 @@ const updateCounterDisplay = () => {
 
 window.addEventListener("load", () => {
   let storedCartList = localStorage.getItem("cartList");
+  let storedCartListItems = localStorage.getItem("cartListItems");
+  let storedPrices = localStorage.getItem("prices");
   if (storedCartList) {
       cartList = JSON.parse(storedCartList);
+      cartListItems = JSON.parse(storedCartListItems);
+      prices = JSON.parse(storedPrices);
+
       if (cartList.length > 0) {
         itemList.innerHTML = cartList.join("");
       }
@@ -1752,3 +1835,27 @@ searchBar.addEventListener("keyup", () => {
         searchedList.style.display = found ? "flex" : "none";
     }
 })
+
+const paymentForm = document.getElementById('orderForm');
+paymentForm.addEventListener("submit", payWithPaystack, false);
+function payWithPaystack(e) {
+  e.preventDefault();
+
+  let handler = PaystackPop.setup({
+    key: 'pk_live_5409d34aa6ff6e291bc4d2d049fbf6bfb0513202', // Replace with your public key
+    email: document.getElementById("email-address").value,
+    amount: sum(prices) * 100,
+    currency: 'GHS',
+    ref: ''+Math.floor((Math.random() * 1000000000) + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
+    // label: "Optional string that replaces customer email"
+    onClose: function(){
+      alert('Window closed.');
+    },
+    callback: function(response){
+      let message = 'Payment complete! Reference: ' + response.reference;
+      alert(message);
+    }
+  });
+
+  handler.openIframe();
+} 

@@ -33,7 +33,7 @@ router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
     console.log("🟡 LOGIN REQUEST BODY:", { username, password });
-
+    console.log("JWT_SECRET:", process.env.JWT_SECRET);
     const admin = await Admin.findOne({ username });
     if (!admin) return res.status(400).json({ message: "Invalid credentials" });
 
@@ -44,6 +44,7 @@ router.post("/login", async (req, res) => {
 
     res.json({ token });
   } catch (err) {
+    console.error("🔥 LOGIN ERROR:", err); // Show full error trace
     res.status(500).json({ message: "Server error" });
   }
 });

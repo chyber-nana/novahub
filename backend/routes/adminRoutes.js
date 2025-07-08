@@ -32,7 +32,7 @@ router.post("/login", async (req, res) => {
   console.log("🟡 LOGIN REQUEST:", req.body); // <== log request body
   try {
     const { username, password } = req.body;
-    console.log("🟡 LOGIN REQUEST BODY:", { email, password });
+    console.log("🟡 LOGIN REQUEST BODY:", { username, password });
 
     const admin = await Admin.findOne({ username });
     if (!admin) return res.status(400).json({ message: "Invalid credentials" });

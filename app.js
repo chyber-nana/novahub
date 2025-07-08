@@ -445,7 +445,7 @@ window.addEventListener("load", () => {
 
 async function fetchProducts() {
   try {
-    const res = await fetch("http://localhost:5000/api/products/all");
+    const res = await fetch("https://novahub-backend.onrender.com/api/products/all");
     const products = await res.json();
     return products;
   } catch (err) {

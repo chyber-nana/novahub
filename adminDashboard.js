@@ -7,7 +7,7 @@ if (!token) {
 
 async function fetchProducts() {
   try {
-    const res = await fetch("http://localhost:5000/api/products/all");
+    const res = await fetch("https://novahub-backend.onrender.com/api/products/all");
     const products = await res.json(); // this is an array of product objects
 
     console.log(products); // for debugging

@@ -679,7 +679,8 @@ svg {
 }
 
 
-.products li {
+.products li,
+.products li div {
     cursor: pointer;
     width: 200px;
     height: 300px;
@@ -689,6 +690,18 @@ svg {
     align-items: center;
     justify-content: center;   
     font-family: "Outfit";
+}
+
+.products li div {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+    font-size: 1rem;
 }
 
 .products li div#content {

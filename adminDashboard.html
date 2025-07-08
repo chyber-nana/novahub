@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novahub Admin</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <main id="mainArea">
+        <div class="leftArea">
+            <div class="sideBar" id="sideBar">
+                <div class="logoSection">
+                    <a href="./i$439h9.html" id="logo">Novahub <strong>Admin</strong></a>
+                </div>
+                <div class="pagesSelector">
+                    <ul class="pageList">
+                        <li class="pageItem" id="dashboardPage">
+                            <a class="itemLink" href="#dashboard">
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="pageItem" id="productsPage">
+                            <a class="itemLink" href="#products">
+                                Products
+                            </a>
+                        </li>
+                        <li class="pageItem" id="ordersPage">
+                            <a class="itemLink" href="#orders">
+                                Orders
+                            </a>
+                        </li>
+                        <li class="pageItem" id="usersPage">
+                            <a class="itemLink" href="#users">
+                                Users
+                            </a>
+                        </li>
+                        <li class="pageItem" id="settingsPage">
+                            <a class="itemLink" href="#settings">
+                                Settings
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="logoutSection">
+                    <span id="logout">Logout</span>
+                </div>
+            </div>
+        </div>
+        <div class="logoutScreenPopup hidden">
+            <div class="logoutPopup">
+                <h2>Are you sure you want to logout?</h2>
+                <div class="buttons">
+                    <button id="confirmLogout" onclick="logout()">Yes</button>
+                    <button id="cancelLogout">No</button>
+                </div>
+            </div>
+        </div>
+        <div class="rightArea">
+            <div class="upper-label">
+                <div class="currentPage">
+                    
+                        <span>Dashboard</span>
+                </div>
+                <div class="searchBar">
+                    <input type="search" placeholder="Search...">
+                </div>
+                <div class="userProfile">
+                    Welcome,<span id="adminName"></span>
+                </div> 
+            </div>
+            <div class="pages" id="pages">
+                <div class="page" id="dashboard">
+                    <div class="infoboxContainer">
+                        <div class="info-box totalOrders">
+                            <h2>Total Orders</h2>
+                            <p><span class="totalOrdersCount">0</span></p>
+                        </div>
+                        <div class="info-box totalSales">
+                            <h2>Total Sales</h2>
+                            <p>₵<span class="totalSalesAmount">0.00</span></p>
+                        </div>
+                        <div class="info-box totalProducts">
+                            <h2>Total Products</h2>
+                            <p><span class="totalProductsCount">0</span></p>
+                        </div>
+                    </div>
+                    <div class="recentOrders">
+                        <h2>Recent Orders</h2>
+                        <table class="ordersTable">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersList">
+                                <!-- Orders will be dynamically inserted here -->
+                                <tr>
+                                    <td>12345</td>
+                                    <td>John Doe</td>
+                                    <td>₵100.00</td>
+                                    <td>Completed</td>
+                                    <td>2023-10-01</td>
+                                </tr>
+                                <tr>
+                                    <td>12346</td>
+                                    <td>Jane Smith</td>
+                                    <td>₵150.00</td>
+                                    <td>Pending</td>
+                                    <td>2023-10-02</td>
+                                </tr>
+                                <tr>
+                                    <td>12347</td>
+                                    <td>Mike Johnson</td>
+                                    <td>₵200.00</td>
+                                    <td>Shipped</td>
+                                    <td>2023-10-03</td>
+                                </tr>
+                                <tr>
+                                    <td>12348</td>
+                                    <td>Emily Davis</td>
+                                    <td>₵250.00</td>
+                                    <td>Cancelled</td>
+                                    <td>2023-10-04</td>
+                                </tr>
+                                <tr>
+                                    <td>12349</td>
+                                    <td>Chris Brown</td>
+                                    <td>₵300.00</td>
+                                    <td>Completed</td>
+                                    <td>2023-10-05</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="topSellingProducts">
+                        <h2>Top Selling Products</h2>
+                        <table class="productsTable">
+                            <thead>
+                                <tr>
+                                    <th>Product ID</th>
+                                    <th>Name</th>
+                                    <th>Sales</th>
+                                    <th>Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topProductsList">
+                                <!-- Top selling products will be dynamically inserted here -->
+                                <tr>
+                                    <td>001</td>
+                                    <td>Product A</td>
+                                    <td>₵500.00</td>
+                                    <td>20</td>
+                                </tr>
+                                <tr>
+                                    <td>002</td>
+                                    <td>Product B</td>
+                                    <td>₵300.00</td>
+                                    <td>15</td>
+                                </tr>
+                                <tr>
+                                    <td>003</td>
+                                    <td>Product C</td>
+                                    <td>₵400.00</td>
+                                    <td>10</td>
+                                </tr>
+                                <tr>
+                                    <td>004</td>
+                                    <td>Product D</td>
+                                    <td>₵600.00</td>
+                                    <td>5</td>
+                                </tr>
+                                <tr>
+                                    <td>005</td>
+                                    <td>Product E</td>
+                                    <td>₵700.00</td>
+                                    <td>8</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="page" id="products">
+                    <div class="uppper">
+                        <h1>Products</h1>
+                        <p>Manage your products here.</p>
+                    </div>
+                    <div class="categories" id="categories">
+                        <div class="foreignSims">
+                            <span>Foreign Sims</span>
+                        </div>
+                        <div class="giftCards">
+                            <span>Gift Cards</span>
+                        </div>
+                        <div class="virtualCards">
+                            <span>Virtual Credit Cards</span>
+                        </div>
+                        <div class="paymentCards">
+                            <span>Payment Cards</span>
+                        </div>
+                        <div class="telcoPrepaid">
+                            <span>Telco Pre-paid Cards</span>
+                        </div>
+                        <div class="subscriptions">
+                            <span>Subscriptions</span>
+                        </div>
+                    </div>
+                    <div class="categoryDisplay" id="categoryDisplay">
+                        <div class="foreignSims products">
+                        </div>
+                        <div class="giftCards products">
+                            
+                        </div>
+                        <div class="virtualCards products">
+                            
+                        </div>
+                        <div class="paymentCards products">
+                            
+                        </div>
+                        <div class="telcoPrepaid products">
+                            
+                        </div>
+                        <div class="subscriptions products">
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="page" id="orders">
+                    <h1>Orders</h1>
+                    <p>View and manage customer orders.</p>
+                </div>
+                <div class="page" id="users">
+                    <h1>Users</h1>
+                    <p>Manage user accounts and permissions.</p>
+                </div>
+                <div class="page" id="settings">
+                    <h1>Settings</h1>
+                    <p>Configure your store settings.</p>
+                </div>
+            </div>
+        </div>
+        
+    </main>
+    <script src="adminDashboard.js"></script>
+</body>
+</html>

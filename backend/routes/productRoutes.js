@@ -42,12 +42,22 @@ router.put("/:id", async (req, res) => {
 
 // Delete a product by ID
 router.delete("/:id", async (req, res) => {
-  try {
-    const deleted = await Product.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ message: "Product not found" });
+  const productId = req.params.id;
+  console.log("🧹 DELETE request for:", productId);
 
-    res.json({ message: "Product deleted" });
+  try {
+    const deleted = await Product.findByIdAndDelete(productId);
+
+    if (!deleted) {
+      console.warn("❌ No product found to delete");
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    console.log("✅ Deleted:", deleted.ItemName);
+    res.json({ message: "Product deleted", product: deleted });
+
   } catch (err) {
+    console.error("🔥 DELETE Error:", err.message);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 });

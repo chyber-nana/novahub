@@ -223,7 +223,7 @@ const loadProducts = () => {
 
     // After products are rendered
     document.querySelectorAll(".deleteProductButton").forEach((button) => {
-      button.addEventListener("click", function () {
+      button.addEventListener("click", async function () {
         const productCard = this.closest(".product");
         const productName = productCard.querySelector(".pName").textContent;
 
@@ -231,7 +231,7 @@ const loadProducts = () => {
         if (confirm(`Are you sure you want to delete "${productName}"?`)) {
           // Add backend deletion logic if needed
           let id = getProductIdByName(productName);
-          deleteProduct(id);
+          await deleteProduct(id);
           loadProducts();
         }
       });
@@ -277,7 +277,7 @@ const loadProducts = () => {
 
       const productName = document.querySelector("#eproductName").value;
       const productPrice = document.querySelector("#eproductPrice").value;
-      const productCategory = document.querySelector("#eproductCategory").value;
+      const productCategory = document.querySelector("#eproductCategory").value.toLowerCase();
       const productStock = document.querySelector("#eproductStock").value;
       const productStatus = document.querySelector("#eproductStatus").value;
       const productNotes = document.querySelector("#eproductNotes").value;
@@ -305,6 +305,7 @@ const loadProducts = () => {
       }
 
       await updateProduct(id, object);
+      loadProducts();
     });
 
     // or save them to a global variable

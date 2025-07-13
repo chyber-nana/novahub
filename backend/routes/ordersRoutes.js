@@ -14,6 +14,25 @@ router.post("/add", async (req, res) => {
   }
 });
 
+// Example: routes/ordersRoutes.js
+router.post("/", async (req, res) => {
+  const newOrder = new Order({
+    email: req.body.email,
+    items: req.body.items,
+    amount: req.body.amount,
+    reference: req.body.reference,
+    date: Date.now(),
+  });
+
+  try {
+    const saved = await newOrder.save();
+    res.status(201).json({ message: "Order saved", order: saved });
+  } catch (err) {
+    res.status(500).json({ message: "Error saving order", error: err.message });
+  }
+});
+
+
 // Get all order
 router.get("/all", async (req, res) => {
   try {

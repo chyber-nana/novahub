@@ -7,15 +7,24 @@ const connectDB = require("./config/db");
 const app = express();
 
 connectDB(); // Connect to MongoDB
+const allowedOrigins = [
+  "http://localhost:5500", // for local dev
+  "https://chyber-nana.github.io" // for live GitHub Pages
+];
 
-// Middleware
-const corsOptions = {
-  origin: ["http://127.0.0.1:5500", "http://localhost:5500"], // local dev
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true,
-};
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin like curl or Postman
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
 
-app.use(cors(corsOptions));
 app.use(express.json()); // to parse JSON body from requests
 
 const adminRoutes = require("./routes/adminRoutes");

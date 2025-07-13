@@ -5,6 +5,12 @@
 }
 
 @font-face {
+    font-family: "Montserrat";
+    src: url("./Fonts/Monoton-Regular.woff") format("woff");
+    font-display: swap;
+}
+
+@font-face {
     font-family: "Monoton";
     src: url("./Fonts/Monoton-Regular.woff") format("woff");
     font-display: swap;

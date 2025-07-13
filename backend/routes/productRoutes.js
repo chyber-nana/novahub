@@ -24,4 +24,36 @@ router.get("/all", async (req, res) => {
   }
 });
 
+
+
+// Update a product by ID
+router.put("/:id", async (req, res) => {
+  try {
+    const updated = await Product.findOneAndUpdate(
+      { _id: req.params.id },
+      req.body,
+      { new: true }
+    );
+    alert(updated)
+    if (!updated) return res.status(404).json({ message: "Product not found" });
+
+    res.json({ message: "Product updated", product: updated });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
+
+
+// Delete a product by ID
+router.delete("/:id", async (req, res) => {
+  try {
+    const deleted = await Product.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: "Product not found" });
+
+    res.json({ message: "Product deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
+
 module.exports = router;

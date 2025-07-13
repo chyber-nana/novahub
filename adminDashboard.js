@@ -230,8 +230,8 @@ const loadProducts = () => {
         // Confirm and delete logic here
         if (confirm(`Are you sure you want to delete "${productName}"?`)) {
           // Add backend deletion logic if needed
-          let id = getProductIdByName(productName);
-          await deleteProduct(id);
+          let id = await getProductIdByName(productName);
+          deleteProduct(id);
           loadProducts();
         }
       });

@@ -169,10 +169,6 @@ document.addEventListener("click", (e) => {
     menu.classList.remove("item-show")
     menuBar.classList.toggle("actif")
   }
-
-  if (!cartPage.contains(e.target) && !cart.contains(e.target) && itemsHidden.classList.contains("item--list--show")) {
-    itemsHidden.classList.remove("item--list--show") 
-  }
 })
 
 cartCloseButton.addEventListener("click", () => {
@@ -388,24 +384,25 @@ clearCart.addEventListener("click", () => {
 })
 
 const removeProductItem = (itemName) => {
-    alert("Are you sure you want to remove this item from the cart?");
-    const itemIndex = cartList.findIndex(item => item.includes(itemName));
-    if (itemIndex !== -1) {
-        cartList.splice(itemIndex, 1);
-        cartListItems.splice(itemIndex, 1); // Remove the corresponding item name
-        prices.splice(itemIndex, 1); // Remove the corresponding price
-        localStorage.setItem("cartList", JSON.stringify(cartList));
-        localStorage.setItem("cartListItems", JSON.stringify(cartListItems));
-        localStorage.setItem("prices", JSON.stringify(prices));
-        itemList.innerHTML = cartList.join("");
-        updateCounterDisplay();
-        sum(prices);
-        if (cartList.length === 0) {
-            itemList.innerHTML = `
-                <li class="empty--message">Cart is Empty</li>
-            `;
-        }
-    }
+    if (confirm("Are you sure you want to remove this item from the cart?")) {
+      const itemIndex = cartList.findIndex(item => item.includes(itemName));
+      if (itemIndex !== -1) {
+          cartList.splice(itemIndex, 1);
+          cartListItems.splice(itemIndex, 1); // Remove the corresponding item name
+          prices.splice(itemIndex, 1); // Remove the corresponding price
+          localStorage.setItem("cartList", JSON.stringify(cartList));
+          localStorage.setItem("cartListItems", JSON.stringify(cartListItems));
+          localStorage.setItem("prices", JSON.stringify(prices));
+          itemList.innerHTML = cartList.join("");
+          updateCounterDisplay();
+          sum(prices);
+          if (cartList.length === 0) {
+              itemList.innerHTML = `
+                  <li class="empty--message">Cart is Empty</li>
+              `;
+          }
+      }
+    };
 }
 
 

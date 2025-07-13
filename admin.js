@@ -1,6 +1,6 @@
 // Login Handler
 // ✅ Auto-redirect if already logged in
-const token = localStorage.getItem("adminToken");
+const token = sessionStorage.getItem("adminToken");
 if (token) {
   window.location.href = "adminDashboard.html"; // or your actual dashboard file
 }
@@ -26,7 +26,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     if (res.ok) {
       message.style.color = "green";
       message.textContent = "Login successful ✅";
-      localStorage.setItem("adminToken", data.token);
+      sessionStorage.setItem("adminToken", data.token);
       localStorage.setItem("adminUsername", username);
       setTimeout(() => {
         window.location.href = "adminDashboard.html"; // change to your dashboard file

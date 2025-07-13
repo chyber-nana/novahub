@@ -1,5 +1,5 @@
 // ✅ Auto-redirect if already logged in
-const token = localStorage.getItem("adminToken");
+const token = sessionStorage.getItem("adminToken");
 let currentlyEditingProductName = "";
 if (!token) {
   alert("Access denied. Please log in first.");
@@ -7,6 +7,34 @@ if (!token) {
 }
 
 const loader = document.getElementById("loader");
+function logout() {
+  // Clear both sessionStorage and localStorage (for safety)
+  sessionStorage.removeItem("adminToken");
+  sessionStorage.removeItem("adminUsername");
+
+  localStorage.removeItem("adminToken");
+  localStorage.removeItem("adminUsername");
+
+  // Redirect to login page
+  window.location.href = "admin.html";
+}
+
+let inactivityTimer;
+
+function startInactivityTimer() {
+  clearTimeout(inactivityTimer); // Clear existing timer if any
+  inactivityTimer = setTimeout(() => {
+    // alert("You've been logged out due to inactivity.");
+    logout(); // Your logout function
+  }, 1 * 60 * 1000); // 30 minutes in milliseconds
+}
+
+// List of events that count as activity
+["click", "mousemove", "keydown", "scroll", "touchstart"].forEach(event => {
+  window.addEventListener(event, startInactivityTimer);
+});
+
+startInactivityTimer();
 
 function getAuthHeaders() {
   return {
@@ -363,12 +391,6 @@ cancelLogout.addEventListener("click", function () {
     .getElementsByClassName("logoutScreenPopup")[0]
     .classList.add("hidden");
 });
-
-const logout = function logout() {
-  localStorage.removeItem("adminToken");
-  localStorage.removeItem("adminUsername");
-  window.location.href = "admin.html";
-};
 
 const categoryDisplay = document.getElementById("categoryDisplay");
 let currentCategory = "Foreign Sim Cards";

@@ -1,41 +1,49 @@
 @font-face {
     font-family: "Outfit";
-    src: url("./Fonts/Outfit-ExtraLight.ttf") format("truetype");
+    src: url("./Fonts/Outfit-ExtraLight.woff") format("woff");
+    font-display: swap;
 }
 
 @font-face {
     font-family: "Monoton";
-    src: url("./Fonts/Monoton-Regular.ttf") format("truetype");
+    src: url("./Fonts/Monoton-Regular.woff") format("woff");
+    font-display: swap;
 }
 
 @font-face {
     font-family: "Rosca";
-    src: url("./Fonts/rosca.otf") format("truetype");
+    src: url("./Fonts/Rosca.woff") format("woff");
+    font-display: swap;
 }
 
 @font-face {
     font-family: "Gristela";
-    src: url("./Fonts/gristela.otf") format("truetype");
+    src: url("./Fonts/gristela.woff") format("woff");
+    font-display: swap;
 }
 
 @font-face {
     font-family: "Righteous";
-    src: url("./Fonts/Righteous-Regular.ttf") format("truetype");
+    src: url("./Fonts/Righteous-Regular.woff") format("woff");
+    font-display: swap;
 }
 
 @font-face {
     font-family: "Poppins";
-    src: url("./Fonts/Poppins-Light.ttf") format("truetype");
+    src: url("./Fonts/Poppins-Light.woff") format("woff");
+    font-display: swap;
 }
 
 @font-face {
     font-family: "Roboto";
-    src: url("./Fonts/Roboto-VariableFont_wdth\,wght.ttf") format("truetype");
+    src: url("./Fonts/Roboto-Regular.woff") format("woff");
+    font-display: swap;
 }
 
 @font-face {
     font-family: "Quicksand";
     src: url("./Fonts/Quicksand-VariableFont_wght.ttf");
+    font-display: swap;
 }
 
 

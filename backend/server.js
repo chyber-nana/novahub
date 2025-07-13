@@ -9,7 +9,13 @@ const app = express();
 connectDB(); // Connect to MongoDB
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+  origin: ["http://127.0.0.1:5500", "http://localhost:5500"], // local dev
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json()); // to parse JSON body from requests
 
 const adminRoutes = require("./routes/adminRoutes");

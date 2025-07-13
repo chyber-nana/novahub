@@ -90,7 +90,7 @@ async function deleteProduct(productId) {
       `https://novahub-backend.onrender.com/api/products/${productId}`,
       {
         method: "DELETE",
-        headers: getAuthHeaders(),
+        headers: getAuthHeaders()
       }
     );
 

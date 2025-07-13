@@ -18,7 +18,7 @@
 
 @font-face {
     font-family: "Gristela";
-    src: url("./Fonts/gristela.woff") format("woff");
+    src: url("./Fonts/Gristela-Regular.woff") format("woff");
     font-display: swap;
 }
 
@@ -42,7 +42,7 @@
 
 @font-face {
     font-family: "Quicksand";
-    src: url("./Fonts/Quicksand-VariableFont_wght.ttf");
+    src: url("./Fonts/Quicksand-Light.woff") format("woff");
     font-display: swap;
 }
 

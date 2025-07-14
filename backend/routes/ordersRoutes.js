@@ -13,6 +13,7 @@ router.post("/", async (req, res) => {
       price: req.body.price,
       totalPrice: req.body.totalPrice,
       reference: req.body.reference,
+      orderStatus: "active"
     });
 
     await order.save();

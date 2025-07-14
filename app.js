@@ -939,10 +939,14 @@ function payWithPaystack(e) {
     },
     callback: function (response) {
       let message = "✅ Payment complete! Reference: " + response.reference;
+      console.log("🧾 Name:", document.getElementById("name").value);
+      console.log("📧 Email:", document.getElementById("email-address").value);
+      console.log("💵 Total Price:", sum(prices));
+
       alert(message);
-      const arrayOfProducts = cartListItems.map(item => item[0]);
-      const arrayOfQuantity = cartListItems.map(item => item[1]);
-      const arrayOfPrices = cartListItems.map(item => item[2]);
+      const arrayOfProducts = cartListItems.map((item) => item[0]);
+      const arrayOfQuantity = cartListItems.map((item) => item[1]);
+      const arrayOfPrices = cartListItems.map((item) => item[2]);
       const orderData = {
         userName: document.getElementById("name").value, // Name of the user who placed the order
         userEmail: document.getElementById("email-address").value, // Email of the user who placed the order
@@ -961,8 +965,15 @@ function payWithPaystack(e) {
         },
         body: JSON.stringify(orderData),
       })
-        .then((res) => res.json())
-        .then((data) => {
+        .then(async (res) => {
+          const data = await res.json();
+
+          if (!res.ok) {
+            console.error("❌ Order validation error:", data);
+            alert("❌ Error saving order:\n" + data.error);
+            return;
+          }
+
           console.log("✅ Order saved:", data);
           alert("🧾 Order recorded successfully!");
         })

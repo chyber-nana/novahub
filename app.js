@@ -928,7 +928,7 @@ function payWithPaystack(e) {
   e.preventDefault();
 
   let handler = PaystackPop.setup({
-    key: "pk_live_5409d34aa6ff6e291bc4d2d049fbf6bfb0513202", // Replace with your public key
+    key: "pk_test_6b6f65fb3d05851fd1ae4cc9283af2510f448bc6", // Replace with your public key
     email: document.getElementById("email-address").value,
     amount: sum(prices) * 100,
     currency: "GHS",
@@ -941,11 +941,15 @@ function payWithPaystack(e) {
       let message = "✅ Payment complete! Reference: " + response.reference;
       alert(message);
       const arrayOfProducts = cartListItems.map(item => item[0]);
+      const arrayOfQuantity = cartListItems.map(item => item[1]);
+      const arrayOfPrices = cartListItems.map(item => item[2]);
       const orderData = {
-        name: document.getElementById("name").value,
-        email: document.getElementById("email-address").value,
-        items: arrayOfProducts, // Replace with your array of selected products
-        amount: sum(prices), // Total amount in GHS
+        userName: document.getElementById("name").value, // Name of the user who placed the order
+        userEmail: document.getElementById("email-address").value, // Email of the user who placed the order
+        productsNames: arrayOfProducts,
+        quantity: arrayOfQuantity, // Quantity of the product ordered
+        price: arrayOfPrices, // Price per unit of the product
+        totalPrice: sum(prices),
         reference: response.reference,
       };
 

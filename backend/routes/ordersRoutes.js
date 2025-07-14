@@ -1,11 +1,13 @@
 const express = require("express");
-const Order = require("../models/Orders");
+const Order = require("./models/Orders");
 
 const router = express.Router();
 
 // Add a new order
 router.post("/add", async (req, res) => {
   try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("✅ Connected to MongoDB");
     const product = new Order(req.body);
     await product.save();
     res.status(201).json({ message: "Order added", order });

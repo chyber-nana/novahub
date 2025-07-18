@@ -558,9 +558,7 @@ function initializeProducts() {
       let newItem = document.createElement("li");
       newItem.innerHTML = `<div class="product">
                                         <div id="content">
-                                            <img src="./Images/Imagesss/${
-                                              productData.ItemName
-                                            }.png" alt="${
+                                            <img src="${productData.ImageURL}" alt="${
         productData.ItemName.split(" ")[0]
       } flag">
                                             <div class="control">
@@ -585,9 +583,7 @@ function initializeProducts() {
       let newItem = document.createElement("li");
       newItem.innerHTML = `<div class="product">
                                         <div id="content">
-                                            <img src="./Images/Imagesss/${
-                                              productData.ItemName
-                                            }.png" alt="${
+                                            <img src="${productData.ImageURL}" alt="${
         productData.ItemName.split(" ")[0]
       } flag">
                                             <div class="control">
@@ -614,9 +610,7 @@ function initializeProducts() {
       let newItem = document.createElement("li");
       newItem.innerHTML = `<div class="product">
                                         <div id="content">
-                                            <img src="./Images/Imagesss/${
-                                              productData.ItemName
-                                            }.png" alt="${
+                                            <img src="${productData.ImageURL}" alt="${
         productData.ItemName.split(" ")[0]
       } flag">
                                             <div class="control">
@@ -641,9 +635,7 @@ function initializeProducts() {
       let newItem = document.createElement("li");
       newItem.innerHTML = `<div class="product">
                                         <div id="content">
-                                            <img src="./Images/Imagesss/${
-                                              productData.ItemName
-                                            }.png" alt="${
+                                            <img src="${productData.ImageURL}" alt="${
         productData.ItemName.split(" ")[0]
       } flag">
                                             <div class="control">
@@ -670,9 +662,7 @@ function initializeProducts() {
       let newItem = document.createElement("li");
       newItem.innerHTML = `<div class="product">
                                         <div id="content">
-                                            <img src="./Images/Imagesss/${
-                                              productData.ItemName
-                                            }.png" alt="${
+                                            <img src="${productData.ImageURL}" alt="${
         productData.ItemName.split(" ")[0]
       } flag">
                                             <div class="control">
@@ -697,9 +687,7 @@ function initializeProducts() {
       let newItem = document.createElement("li");
       newItem.innerHTML = `<div class="product">
                                         <div id="content">
-                                            <img src="./Images/Imagesss/${
-                                              productData.ItemName
-                                            }.png" alt="${
+                                            <img src="${productData.ImageURL}" alt="${
         productData.ItemName.split(" ")[0]
       } flag">
                                             <div class="control">
@@ -773,9 +761,7 @@ for (let j = 0; j < searchedList.length; j++) {
     );
 
     selectedItemsPage.getElementsByClassName("texts")[0].innerHTML = `
-            <img src="./Images/Countries/${imageVerify(
-              productData.ItemName
-            )}" alt="${
+            <img src="${productData.ImageURL}" alt="${
       productData.ItemName.split(" ")[0]
     } flag" id="selected--item--image">
             <h1 class="selected--item--name">
@@ -850,9 +836,7 @@ for (let j = 0; j < searchedList.length; j++) {
     );
 
     selectedItemsPage.getElementsByClassName("texts")[0].innerHTML = `
-            <img src="./Images/Countries/${imageVerify(
-              productData.ItemName
-            )}" alt="${
+            <img src=".${productData.ImageURL}" alt="${
       productData.ItemName.split(" ")[0]
     } flag" id="selected--item--image">
             <h1 class="selected--item--name">

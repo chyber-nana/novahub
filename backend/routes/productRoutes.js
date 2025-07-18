@@ -1,16 +1,43 @@
 const express = require("express");
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
 const Product = require("../models/Product");
 
 const router = express.Router();
 
-// Add a new product
-router.post("/add", async (req, res) => {
+// Configure Multer for memory storage
+const upload = multer({ storage: multer.memoryStorage() });
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+});
+
+// 🔼 Add a new product with image upload
+router.post("/add", upload.single("image"), async (req, res) => {
   try {
-    const product = new Product(req.body);
+    const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "novahub" },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      stream.end(req.file.buffer);
+    });
+
+    const product = new Product({
+      ...req.body,
+      ImageUrl: uploadResult.secure_url,
+    });
+
     await product.save();
-    res.status(201).json({ message: "Product added", product });
+    res.status(201).json({ message: "✅ Product added", product });
   } catch (err) {
-    res.status(500).json({ message: "Error adding product", error: err.message });
+    res.status(500).json({ message: "❌ Error adding product", error: err.message });
   }
 });
 
@@ -24,14 +51,19 @@ router.get("/all", async (req, res) => {
   }
 });
 
-
-
-// Update a product by ID
-router.put("/:id", async (req, res) => {
+// 🔄 Update a product by ID (including optional image update)
+router.put("/:id", upload.single("image"), async (req, res) => {
   try {
-    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    const updateData = { ...req.body };
+
+    if (req.file && req.file.path) {
+      updateData.image = req.file.path; // Update image only if a new one is provided
+    }
+
+    const updated = await Product.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
     });
+
     if (!updated) return res.status(404).json({ message: "Product not found" });
 
     res.json({ message: "Product updated", product: updated });
@@ -55,7 +87,6 @@ router.delete("/:id", async (req, res) => {
 
     console.log("✅ Deleted:", deleted.ItemName);
     res.json({ message: "Product deleted", product: deleted });
-
   } catch (err) {
     console.error("🔥 DELETE Error:", err.message);
     res.status(500).json({ message: "Server error", error: err.message });

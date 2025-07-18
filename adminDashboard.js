@@ -48,10 +48,13 @@ async function fetchProducts() {
     const res = await fetch(
       "https://novahub-backend.onrender.com/api/products/all"
     );
+    const resOrders = await fetch ("https://novahub-backend.onrender.com/api/orders/all");
+    const orders = await resOrders.json();
     const products = await res.json(); // this is an array of product objects
 
     console.log(products); // for debugging
-    return products;
+    console.log(orders); // for debugging
+    return [products, orders];
   } catch (err) {
     console.error("Failed to fetch products:", err);
     return [];
@@ -145,11 +148,11 @@ async function getProductIdByName(name) {
   const products = await fetchProducts(); // Fetch all from DB
   const trimmedName = name.trim().toLowerCase();
 
-  const found = products.find(
+  const found = products[0].find(
     (p) => p.ItemName.trim().toLowerCase() === trimmedName
   );
   console.log("Looking for:", trimmedName);
-  products.forEach((p) => console.log("→", p.ItemName.toLowerCase()));
+  products[0].forEach((p) => console.log("→", p.ItemName.toLowerCase()));
 
   if (found) {
     console.log("✅ Found ID:", found._id);
@@ -210,7 +213,7 @@ const productsList = document.querySelector(".productsList");
 const categoryItemName = document.querySelector(".categoryItemName");
 const editProductButton = document.getElementById("editProductButton");
 const editForm = document.getElementById("editProductForm");
-
+const ordersList = document.querySelector(".newOrdersContainer")
 // Usage
 let numberOfProducts = 0;
 const loadProducts = () => {
@@ -219,13 +222,24 @@ const loadProducts = () => {
                                                           <div class="spinner"></div>
                                                        </div>
   `;
+
   loader.style.display = "flex";
   fetchProducts().then((products) => {
     // Now you can loop through products or display them
     console.log("Here");
     numberOfProducts = 0; // Reset the count for each load
     document.querySelectorAll(".loader-overlay").forEach((el) => el.remove());
-    products.forEach((product) => {
+    products[1].forEach((order) => {
+      // if (order.orderStatus === "active") {
+        ordersList.innerHTML += `                                                            
+        <h3>👤 ${order.userName}</h3>
+        <p>📧 <strong>Email:</strong> ${order.userEmail}</p>
+        <p>🛍️ <strong>Products:</strong><br> ${order.productsNames.map(p => `• ${p}`).join("<br>")}</p>
+        <p>💵 <strong>Total:</strong> GHS ${order.totalPrice}</p>
+        `
+      // }
+    })
+    products[0].forEach((product) => {
       if (currentCategory.toLowerCase() === product.ItemCategory) {
         console.log("kok");
         // Remove any loader-overlay elements before displaying products
@@ -269,7 +283,7 @@ const loadProducts = () => {
       button.addEventListener("click", function () {
         const productCard = this.closest(".product");
         const productName = productCard.querySelector(".pName").textContent;
-        const foundProduct = products.find(
+        const foundProduct = products[0].find(
           (product) => product.ItemName === productName
         );
 
@@ -337,7 +351,7 @@ const loadProducts = () => {
     });
 
     // or save them to a global variable
-    window.allProducts = products;
+    window.allProducts = products[0];
   });
 };
 

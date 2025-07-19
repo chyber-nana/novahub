@@ -26,7 +26,7 @@ function startInactivityTimer() {
   inactivityTimer = setTimeout(() => {
     // alert("You've been logged out due to inactivity.");
     logout(); // Your logout function
-  }, 1 * 60 * 1000); // 30 minutes in milliseconds
+  }, 10 * 60 * 1000); // 30 minutes in milliseconds
 }
 
 // List of events that count as activity

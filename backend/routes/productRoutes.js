@@ -16,7 +16,7 @@ cloudinary.config({
 });
 
 // 🔼 Add a new product with image upload
-router.put("/:id", upload.single("image"), async (req, res) => {
+router.put("/:id", upload.single("ImageURL"), async (req, res) => {
   console.log("🛠️ Update route hit");
   console.log("Body:", req.body);
   console.log("File:", req.file);

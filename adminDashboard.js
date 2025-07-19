@@ -88,12 +88,9 @@ async function addProduct(productData) {
 
 async function updateProduct(productId, updatedData) {
   const token = sessionStorage.getItem("adminToken");
-
   const formData = new FormData();
-  console.log("🧪 Sending update form data:");
-  console.log("Image file:", formData.get("image"));
-  console.log("Other data:", formData.get("ItemName"), formData.get("ItemPrice"), formData.get("ItemDescription")); // etc.
 
+  // Append regular fields
   formData.append("ItemName", updatedData.ItemName);
   formData.append("ItemCategory", updatedData.ItemCategory);
   formData.append("Price", updatedData.Price);
@@ -102,13 +99,23 @@ async function updateProduct(productId, updatedData) {
   formData.append("Notes", updatedData.Notes);
   formData.append("InStock", updatedData.InStock);
 
-  // Append the new image only if it exists (image is a file object)
+  // Only append image if provided
   if (updatedData.ImageURL) {
-    alert(updateProduct.ImageURL)
-    formData.append("image", updatedData.ImageURL);
-    alert(updateProduct.ImageURL)
-
+    formData.append("image", updatedData.ImageURL); // must be a File object
   }
+
+  // ✅ Log the final data being sent
+  console.log("🧪 Sending update form data:");
+  console.log("Image file:", formData.get("image"));
+  console.log("Other data:", {
+    ItemName: formData.get("ItemName"),
+    ItemCategory: formData.get("ItemCategory"),
+    Price: formData.get("Price"),
+    Stock: formData.get("Stock"),
+    Status: formData.get("Status"),
+    Notes: formData.get("Notes"),
+    InStock: formData.get("InStock"),
+  });
 
   try {
     const res = await fetch(
@@ -116,27 +123,25 @@ async function updateProduct(productId, updatedData) {
       {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${token}`, // Don't set Content-Type, let FormData do that
+          Authorization: `Bearer ${token}`,
+          // Don't manually set Content-Type — let the browser handle it for FormData
         },
         body: formData,
       }
     );
 
-    const contentType = res.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-      const text = await res.text();
-      throw new Error(`Expected JSON, got: ${text.substring(0, 100)}...`);
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`Server response: ${res.status} - ${errText}`);
     }
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Failed to update");
-
-    alert("✏️ Product updated!");
-    console.log(data.product);
+    const result = await res.json();
+    console.log("✅ Product updated successfully:", result);
+    alert("Product updated successfully!");
+    location.reload(); // optional: refresh the product list
   } catch (err) {
-    console.error("Update Error:", err);
-    alert("❌ " + err.message);
-    throw err;
+    console.error("❌ Update Error:", err);
+    alert("Failed to update product.");
   }
 }
 
@@ -323,7 +328,7 @@ const loadProducts = () => {
         const productStock = editForm.querySelector("#eproductStock");
         const productInStock = editForm.querySelector("#eproductInStock");
         const productNotes = editForm.querySelector("#eproductNotes");
-        const productImageURL = editForm.querySelector("#eproductImage")
+        const productImageURL = editForm.querySelector("#eproductImage");
         currentlyEditingProductName = productName;
 
         if (foundProduct) {
@@ -333,7 +338,7 @@ const loadProducts = () => {
           productStock.value = foundProduct.Stock;
           productInStock.value = foundProduct.InStock;
           productNotes.value = foundProduct.Notes;
-          productImageURL = foundProduct.ImageURL;
+          // productImageURL.value = foundProduct.ImageURL;
         } else {
           console.warn("Product not found");
         }
@@ -353,17 +358,22 @@ const loadProducts = () => {
       const productStock = document.querySelector("#eproductStock").value;
       const productStatus = document.querySelector("#eproductStatus").value;
       const productNotes = document.querySelector("#eproductNotes").value;
-      const productInStock = document.querySelector("#eproductInStock").value;
-      const imageFile = document.querySelector("#eproductImage").files[0];
+      const productInStock = document.querySelector("#eproductInStock").checked; // ✅ checkbox uses .checked
+      const imageFile = document.querySelector("#eproductImage").files[0]; // ✅ will be undefined if no file selected
 
       const id = await getProductIdByName(productName);
       if (!id) {
         alert("❌ Could not find product ID.");
         return;
       }
-      alert(imageFile)
+
+      // 🧪 Debug logs
+      console.log("📦 Preparing updated product:");
+      console.log("Name:", productName);
+      console.log("Image file:", imageFile);
+
       const updatedData = {
-        ImageURL: imageFile, // this can be undefined or File
+        ImageURL: imageFile || null, // ✅ Only include if file selected
         ItemName: productName,
         ItemCategory: productCategory,
         Price: parseFloat(productPrice.split("-")[0]) || 0,
@@ -373,7 +383,7 @@ const loadProducts = () => {
             ? "available"
             : "unavailable",
         Notes: productNotes || "",
-        InStock: productInStock.toLowerCase() === "true",
+        InStock: productInStock,
       };
 
       try {

@@ -97,7 +97,8 @@ async function updateProduct(productId, updatedData) {
   formData.append("Stock", updatedData.Stock);
   formData.append("Status", updatedData.Status);
   formData.append("Notes", updatedData.Notes);
-  formData.append("InStock", updatedData.InStock);
+  formData.append("InStock", updatedData.InStock === "true");
+
 
   // Only append image if provided
   if (updatedData.ImageURL) {

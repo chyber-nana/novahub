@@ -16,30 +16,42 @@ cloudinary.config({
 });
 
 // 🔼 Add a new product with image upload
-router.post("/add", upload.single("image"), async (req, res) => {
+router.put("/:id", upload.single("image"), async (req, res) => {
+  console.log("🛠️ Update route hit");
+  console.log("Body:", req.body);
+  console.log("File:", req.file);
+
   try {
-    const uploadResult = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-        { folder: "novahub" },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        }
-      );
-      stream.end(req.file.buffer);
+    const updateData = { ...req.body };
+
+    // 🔄 If new image uploaded, re-upload to Cloudinary
+    if (req.file) {
+      const uploadResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "novahub" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(req.file.buffer);
+      });
+
+      updateData.ImageURL = uploadResult.secure_url; // Use proper field name
+    }
+
+    const updated = await Product.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
     });
 
-    const product = new Product({
-      ...req.body,
-      ImageURL: uploadResult.secure_url,
-    });
+    if (!updated) return res.status(404).json({ message: "Product not found" });
 
-    await product.save();
-    res.status(201).json({ message: "✅ Product added", product });
+    res.json({ message: "✅ Product updated", product: updated });
   } catch (err) {
-    res.status(500).json({ message: "❌ Error adding product", error: err.message });
+    res.status(500).json({ message: "❌ Server error", error: err.message });
   }
 });
+
 
 // Get all products
 router.get("/all", async (req, res) => {

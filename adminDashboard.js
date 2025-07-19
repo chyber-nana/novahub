@@ -87,26 +87,37 @@ async function addProduct(productData) {
 }
 
 async function updateProduct(productId, updatedData) {
+  const token = sessionStorage.getItem("adminToken");
+
+  const formData = new FormData();
+  console.log("🧪 Sending update form data:");
+  console.log("Image file:", formData.get("image"));
+  console.log("Other data:", formData.get("ItemName"), formData.get("ItemPrice"), formData.get("ItemDescription")); // etc.
+
+  formData.append("ItemName", updatedData.ItemName);
+  formData.append("ItemCategory", updatedData.ItemCategory);
+  formData.append("Price", updatedData.Price);
+  formData.append("Stock", updatedData.Stock);
+  formData.append("Status", updatedData.Status);
+  formData.append("Notes", updatedData.Notes);
+  formData.append("InStock", updatedData.InStock);
+
+  // Append the new image only if it exists (image is a file object)
+  if (updatedData.ImageURL) {
+    alert(updateProduct.ImageURL)
+    formData.append("image", updatedData.ImageURL);
+    alert(updateProduct.ImageURL)
+
+  }
+
   try {
-    const formData = new FormData();
-
-    // Append all fields from updatedData (except image)
-    for (const key in updatedData) {
-      if (key !== "image") {
-        formData.append(key, updatedData[key]);
-      }
-    }
-
-    // Only append image if it's a File object
-    if (updatedData.image instanceof File) {
-      formData.append("image", updatedData.image); // must match your multer field name
-    }
-
     const res = await fetch(
       `https://novahub-backend.onrender.com/api/products/${productId}`,
       {
         method: "PUT",
-        headers: getAuthHeaders(), // make sure this doesn't set Content-Type manually!
+        headers: {
+          Authorization: `Bearer ${token}`, // Don't set Content-Type, let FormData do that
+        },
         body: formData,
       }
     );
@@ -128,7 +139,6 @@ async function updateProduct(productId, updatedData) {
     throw err;
   }
 }
-
 
 async function deleteProduct(productId) {
   try {
@@ -199,7 +209,6 @@ function capitalizeWords(str) {
 }
 
 const addProductForm = document.getElementById("addProductForm");
-const editProductForm = document.getElementById("editProductForm");
 
 addProductForm.addEventListener("submit", async function (e) {
   e.preventDefault();
@@ -314,6 +323,7 @@ const loadProducts = () => {
         const productStock = editForm.querySelector("#eproductStock");
         const productInStock = editForm.querySelector("#eproductInStock");
         const productNotes = editForm.querySelector("#eproductNotes");
+        const productImageURL = editForm.querySelector("#eproductImage")
         currentlyEditingProductName = productName;
 
         if (foundProduct) {
@@ -323,6 +333,7 @@ const loadProducts = () => {
           productStock.value = foundProduct.Stock;
           productInStock.value = foundProduct.InStock;
           productNotes.value = foundProduct.Notes;
+          productImageURL = foundProduct.ImageURL;
         } else {
           console.warn("Product not found");
         }
@@ -350,50 +361,27 @@ const loadProducts = () => {
         alert("❌ Could not find product ID.");
         return;
       }
-
-      const formData = new FormData();
-      formData.append("ItemName", productName);
-      formData.append("ItemCategory", productCategory);
-      formData.append("Price", parseFloat(productPrice.split("-")[0]) || 0);
-      formData.append("Stock", parseInt(productStock, 10) || 0);
-      formData.append(
-        "Status",
-        productStatus.toLowerCase() === "in stock" ? "available" : "unavailable"
-      );
-      formData.append("Notes", productNotes || "");
-      formData.append("InStock", productInStock.toLowerCase() === "true");
-
-      // Only append image if a new one was selected
-      if (imageFile) {
-        formData.append("image", imageFile);
-      }
+      alert(imageFile)
+      const updatedData = {
+        ImageURL: imageFile, // this can be undefined or File
+        ItemName: productName,
+        ItemCategory: productCategory,
+        Price: parseFloat(productPrice.split("-")[0]) || 0,
+        Stock: parseInt(productStock, 10) || 0,
+        Status:
+          productStatus.toLowerCase() === "in stock"
+            ? "available"
+            : "unavailable",
+        Notes: productNotes || "",
+        InStock: productInStock.toLowerCase() === "true",
+      };
 
       try {
-        const res = await fetch(
-          `https://novahub-backend.onrender.com/api/products/${id}`,
-          {
-            method: "PUT",
-            headers: {
-              Authorization: `Bearer ${token}`, // 👈 DON'T set Content-Type — let browser set it automatically
-            },
-            body: formData,
-          }
-        );
-
-        const contentType = res.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          const text = await res.text();
-          throw new Error(`Expected JSON, got: ${text.substring(0, 100)}...`);
-        }
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Failed to update");
-
-        alert("✏️ Product updated!");
+        await updateProduct(id, updatedData);
         loadProducts();
       } catch (err) {
-        console.error("Update Error:", err);
-        alert("❌ " + err.message);
+        console.error("Update failed:", err);
+        alert("❌ Failed to update product.");
       }
     });
 
@@ -409,7 +397,7 @@ editCancelButton.addEventListener("click", () => {
 });
 
 const adminNameElement = document.getElementById("adminName");
-const adminName = localStorage.getItem("adminUsername") || "Admin";
+const adminName = sessionStorage.getItem("adminUsername") || "Admin";
 const currentPage = document.querySelector(".currentPage");
 const sideBar = document.querySelector(".sideBar");
 let menuShow = false;

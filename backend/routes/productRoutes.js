@@ -31,7 +31,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
 
     const product = new Product({
       ...req.body,
-      ImageUrl: uploadResult.secure_url,
+      ImageURL: uploadResult.secure_url,
     });
 
     await product.save();

@@ -63,7 +63,7 @@ router.put("/:id", upload.single("image"), async (req, res) => {
     const updated = await Product.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
     });
- 
+
     if (!updated) return res.status(404).json({ message: "Product not found" });
 
     res.json({ message: "Product updated", product: updated });

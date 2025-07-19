@@ -57,7 +57,7 @@ router.put("/:id", upload.single("image"), async (req, res) => {
     const updateData = { ...req.body };
 
     if (req.file && req.file.path) {
-      updateData.image = req.file.path; // Update image only if a new one is provided
+      updateData.ImageURL = req.file.path; // Update image only if a new one is provided
     }
 
     const updated = await Product.findByIdAndUpdate(req.params.id, updateData, {

@@ -30,7 +30,7 @@ function startInactivityTimer() {
 }
 
 // List of events that count as activity
-["click", "mousemove", "keydown", "scroll", "touchstart"].forEach(event => {
+["click", "mousemove", "keydown", "scroll", "touchstart"].forEach((event) => {
   window.addEventListener(event, startInactivityTimer);
 });
 
@@ -48,7 +48,9 @@ async function fetchProducts() {
     const res = await fetch(
       "https://novahub-backend.onrender.com/api/products/all"
     );
-    const resOrders = await fetch ("https://novahub-backend.onrender.com/api/orders/all");
+    const resOrders = await fetch(
+      "https://novahub-backend.onrender.com/api/orders/all"
+    );
     const orders = await resOrders.json();
     const products = await res.json(); // this is an array of product objects
 
@@ -81,29 +83,41 @@ async function addProduct(productData) {
     console.error("Add Product Error:", err);
     alert("❌ " + err.message);
   }
-  editForm.classList.add("hidden")
+  editForm.classList.add("hidden");
 }
 
 async function updateProduct(productId, updatedData) {
   try {
+    const formData = new FormData();
+
+    // Append all fields from updatedData (except image)
+    for (const key in updatedData) {
+      if (key !== "image") {
+        formData.append(key, updatedData[key]);
+      }
+    }
+
+    // Only append image if it's a File object
+    if (updatedData.image instanceof File) {
+      formData.append("image", updatedData.image); // must match your multer field name
+    }
+
     const res = await fetch(
       `https://novahub-backend.onrender.com/api/products/${productId}`,
       {
         method: "PUT",
-        headers: getAuthHeaders(),
-        body: JSON.stringify(updatedData),
+        headers: getAuthHeaders(), // make sure this doesn't set Content-Type manually!
+        body: formData,
       }
     );
-    console.log("Updated shi" + updatedData);
-    // Add the error handling check
+
     const contentType = res.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
       const text = await res.text();
       throw new Error(`Expected JSON, got: ${text.substring(0, 100)}...`);
     }
-    
+
     const data = await res.json();
-    console.log("Res " + data)
     if (!res.ok) throw new Error(data.message || "Failed to update");
 
     alert("✏️ Product updated!");
@@ -115,13 +129,14 @@ async function updateProduct(productId, updatedData) {
   }
 }
 
+
 async function deleteProduct(productId) {
   try {
     const res = await fetch(
       `https://novahub-backend.onrender.com/api/products/${productId}`,
       {
         method: "DELETE",
-        headers: getAuthHeaders()
+        headers: getAuthHeaders(),
       }
     );
 
@@ -213,7 +228,7 @@ const productsList = document.querySelector(".productsList");
 const categoryItemName = document.querySelector(".categoryItemName");
 const editProductButton = document.getElementById("editProductButton");
 const editForm = document.getElementById("editProductForm");
-const ordersList = document.querySelector(".newOrdersContainer")
+const ordersList = document.querySelector(".newOrdersContainer");
 // Usage
 let numberOfProducts = 0;
 const loadProducts = () => {
@@ -231,14 +246,16 @@ const loadProducts = () => {
     document.querySelectorAll(".loader-overlay").forEach((el) => el.remove());
     products[1].forEach((order) => {
       // if (order.orderStatus === "active") {
-        ordersList.innerHTML += `                                                            
+      ordersList.innerHTML += `                                                            
         <h3>👤 ${order.userName}</h3>
         <p>📧 <strong>Email:</strong> ${order.userEmail}</p>
-        <p>🛍️ <strong>Products:</strong><br> ${order.productsNames.map(p => `• ${p}`).join("<br>")}</p>
+        <p>🛍️ <strong>Products:</strong><br> ${order.productsNames
+          .map((p) => `• ${p}`)
+          .join("<br>")}</p>
         <p>💵 <strong>Total:</strong> GHS ${order.totalPrice}</p>
-        `
+        `;
       // }
-    })
+    });
     products[0].forEach((product) => {
       if (currentCategory.toLowerCase() === product.ItemCategory) {
         console.log("kok");
@@ -319,35 +336,65 @@ const loadProducts = () => {
 
       const productName = document.querySelector("#eproductName").value;
       const productPrice = document.querySelector("#eproductPrice").value;
-      const productCategory = document.querySelector("#eproductCategory").value.toLowerCase();
+      const productCategory = document
+        .querySelector("#eproductCategory")
+        .value.toLowerCase();
       const productStock = document.querySelector("#eproductStock").value;
       const productStatus = document.querySelector("#eproductStatus").value;
       const productNotes = document.querySelector("#eproductNotes").value;
       const productInStock = document.querySelector("#eproductInStock").value;
-
-      const object = {
-        ItemName: productName,
-        ItemCategory: productCategory,
-        Price: parseFloat(productPrice.split("-")[0]) || 0,
-        Stock: parseInt(productStock, 10) || 0,
-        Status:
-          productStatus.toLowerCase() === "in stock"
-            ? "available"
-            : "unavailable",
-        Notes: productNotes || "",
-        InStock: productInStock.toLowerCase() === "true",
-      };
+      const imageFile = document.querySelector("#eproductImage").files[0];
 
       const id = await getProductIdByName(productName);
-      console.log("Product Name:", productName);
-      console.log("Editing ID:", id);
       if (!id) {
-        alert("❌ Could not find product ID. Are you sure the product exists?");
+        alert("❌ Could not find product ID.");
         return;
       }
 
-      await updateProduct(id, object);
-      loadProducts();
+      const formData = new FormData();
+      formData.append("ItemName", productName);
+      formData.append("ItemCategory", productCategory);
+      formData.append("Price", parseFloat(productPrice.split("-")[0]) || 0);
+      formData.append("Stock", parseInt(productStock, 10) || 0);
+      formData.append(
+        "Status",
+        productStatus.toLowerCase() === "in stock" ? "available" : "unavailable"
+      );
+      formData.append("Notes", productNotes || "");
+      formData.append("InStock", productInStock.toLowerCase() === "true");
+
+      // Only append image if a new one was selected
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
+      try {
+        const res = await fetch(
+          `https://novahub-backend.onrender.com/api/products/${id}`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`, // 👈 DON'T set Content-Type — let browser set it automatically
+            },
+            body: formData,
+          }
+        );
+
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await res.text();
+          throw new Error(`Expected JSON, got: ${text.substring(0, 100)}...`);
+        }
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Failed to update");
+
+        alert("✏️ Product updated!");
+        loadProducts();
+      } catch (err) {
+        console.error("Update Error:", err);
+        alert("❌ " + err.message);
+      }
     });
 
     // or save them to a global variable

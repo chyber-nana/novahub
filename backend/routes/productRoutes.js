@@ -26,19 +26,33 @@ router.put("/:id", upload.single("image"), async (req, res) => {
 
     // 🔄 If new image uploaded, re-upload to Cloudinary
     if (req.file) {
-      const uploadResult = await new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: "novahub" },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
-        stream.end(req.file.buffer);
-      });
+  console.log("📤 Uploading new image to Cloudinary...");
 
-      updateData.ImageURL = uploadResult.secure_url; // Use proper field name
-    }
+  try {
+    const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "novahub" },
+        (error, result) => {
+          if (error) {
+            console.error("❌ Cloudinary upload error:", error);
+            reject(error); // this will jump to outer catch
+          } else {
+            console.log("✅ Cloudinary upload success:", result.secure_url);
+            resolve(result);
+          }
+        }
+      );
+      stream.end(req.file.buffer);
+    });
+
+    updateData.ImageURL = uploadResult.secure_url;
+
+  } catch (uploadErr) {
+    console.error("🔥 Cloudinary upload failed:", uploadErr);
+    return res.status(500).json({ message: "Cloudinary upload failed", error: uploadErr.message });
+  }
+}
+
 
     const updated = await Product.findByIdAndUpdate(req.params.id, updateData, {
       new: true,

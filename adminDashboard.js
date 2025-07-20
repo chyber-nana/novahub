@@ -244,6 +244,9 @@ const categoryItemName = document.querySelector(".categoryItemName");
 const editProductButton = document.getElementById("editProductButton");
 const editForm = document.getElementById("editProductForm");
 const ordersList = document.querySelector(".newOrdersContainer");
+const totalProducts = document.getElementById("totalProducts")
+const totalOrders = document.getElementById("totalOrders")
+
 // Usage
 let numberOfProducts = 0;
 const loadProducts = () => {
@@ -260,17 +263,22 @@ const loadProducts = () => {
     numberOfProducts = 0; // Reset the count for each load
     document.querySelectorAll(".loader-overlay").forEach((el) => el.remove());
     products[1].forEach((order) => {
+
       // if (order.orderStatus === "active") {
-      ordersList.innerHTML += `                                                            
+      ordersList.innerHTML += `    <div class="orderr">                                                        
         <h3>👤 ${order.userName}</h3>
         <p>📧 <strong>Email:</strong> ${order.userEmail}</p>
         <p>🛍️ <strong>Products:</strong><br> ${order.productsNames
           .map((p) => `• ${p}`)
           .join("<br>")}</p>
         <p>💵 <strong>Total:</strong> GHS ${order.totalPrice}</p>
+        <button class="done">Done</button>
+        </div>
         `;
       // }
     });
+    window.allOrders = products[1]
+    totalOrders.nextElementSibling.innerHTML = window.allOrders.length
     products[0].forEach((product) => {
       if (currentCategory.toLowerCase() === product.ItemCategory) {
         console.log("kok");
@@ -398,8 +406,11 @@ const loadProducts = () => {
 
     // or save them to a global variable
     window.allProducts = products[0];
+    totalProducts.nextElementSibling.innerHTML = window.allProducts.length
+
   });
 };
+
 
 const editCancelButton = document.getElementById("cancelEditProduct");
 

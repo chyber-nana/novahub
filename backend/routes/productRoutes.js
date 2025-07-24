@@ -16,26 +16,28 @@ cloudinary.config({
 });
 
 // Add a new product with optional image upload
+// Add new product with image
 router.post("/add", upload.single("image"), async (req, res) => {
-  console.log("📥 Add product hit");
+  console.log("📥 Add Product route hit");
   console.log("Body:", req.body);
   console.log("File:", req.file);
 
   try {
     const productData = { ...req.body };
 
-    // If image uploaded, upload to Cloudinary
+    // If image is uploaded, upload to Cloudinary
     if (req.file) {
-      console.log("📤 Uploading to Cloudinary...");
+      console.log("📤 Uploading image to Cloudinary...");
+
       const uploadResult = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           { folder: "novahub" },
           (error, result) => {
             if (error) {
-              console.error("❌ Cloudinary error:", error);
+              console.error("❌ Cloudinary upload error:", error);
               reject(error);
             } else {
-              console.log("✅ Cloudinary success:", result.secure_url);
+              console.log("✅ Uploaded:", result.secure_url);
               resolve(result);
             }
           }
@@ -47,12 +49,9 @@ router.post("/add", upload.single("image"), async (req, res) => {
     }
 
     const newProduct = new Product(productData);
-    const savedProduct = await newProduct.save();
+    await newProduct.save();
 
-    res.status(201).json({
-      message: "✅ Product added successfully",
-      product: savedProduct,
-    });
+    res.status(201).json({ message: "✅ Product added", product: newProduct });
   } catch (err) {
     console.error("🔥 Add product error:", err.message);
     res.status(500).json({ message: "Server error", error: err.message });

@@ -226,8 +226,10 @@ addProductForm.addEventListener("submit", async function (e) {
   const productPrice = document.getElementById("productPrice");
   const productCategory = document.getElementById("productCategory");
   const productStock = document.getElementById("productStock");
+  const imageFile = document.querySelector("#productImage").files[0]; // ✅ will be undefined if no file selected
 
   const productObject = {
+    ImageURL: imageFile || null,
     ItemName: productName.value,
     ItemCategory: productCategory.value.toLowerCase(),
     Price: parseFloat(productPrice.value.split("-")[0]) || 0, // takes min price
@@ -240,7 +242,7 @@ addProductForm.addEventListener("submit", async function (e) {
     InStock: productInStock.value.toLowerCase() === "true",
   };
 
-  addProduct(productObject);
+  addProduct(addProductForm);
 });
 
 const productsList = document.querySelector(".productsList");

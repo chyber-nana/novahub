@@ -15,6 +15,51 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET,
 });
 
+// Add a new product with image upload
+router.post("/add", upload.single("image"), async (req, res) => {
+  console.log("🆕 Add product route hit");
+  console.log("Body:", req.body);
+  console.log("File:", req.file);
+
+  try {
+    const newProductData = { ...req.body };
+
+    // 🔄 Upload image if present
+    if (req.file) {
+      console.log("📤 Uploading image to Cloudinary...");
+      const uploadResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "novahub" },
+          (error, result) => {
+            if (error) {
+              console.error("❌ Cloudinary upload error:", error);
+              reject(error);
+            } else {
+              console.log("✅ Upload success:", result.secure_url);
+              resolve(result);
+            }
+          }
+        );
+        stream.end(req.file.buffer);
+      });
+
+      newProductData.ImageURL = uploadResult.secure_url;
+    }
+
+    const newProduct = new Product(newProductData);
+    const savedProduct = await newProduct.save();
+
+    res.status(201).json({
+      message: "✅ Product added successfully",
+      product: savedProduct,
+    });
+  } catch (err) {
+    console.error("🔥 Add Product Error:", err.message);
+    res.status(500).json({ message: "❌ Server error", error: err.message });
+  }
+});
+
+
 // 🔼 Add a new product with image upload
 router.put("/:id", upload.single("image"), async (req, res) => {
   console.log("🛠️ Update route hit");

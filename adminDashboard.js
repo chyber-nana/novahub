@@ -63,18 +63,20 @@ async function fetchProducts() {
   }
 }
 
-async function addProduct(productData) {
+async function addProduct(formElement) {
+  const formData = new FormData(formElement);
+
   try {
-    const res = await fetch(
-      "https://novahub-backend.onrender.com/api/products/add",
-      {
-        method: "POST",
-        headers: getAuthHeaders(),
-        body: JSON.stringify(productData),
-      }
-    );
+    const res = await fetch("https://novahub-backend.onrender.com/api/products/add", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+      },
+      body: formData,
+    });
 
     const data = await res.json();
+
     if (!res.ok) throw new Error(data.message || "Failed to add product");
 
     alert("✅ Product added!");
@@ -83,8 +85,10 @@ async function addProduct(productData) {
     console.error("Add Product Error:", err);
     alert("❌ " + err.message);
   }
-  editForm.classList.add("hidden");
+
+  // editForm.classList.add("hidden");  
 }
+
 
 async function updateProduct(productId, updatedData) {
   const token = sessionStorage.getItem("adminToken");
@@ -236,7 +240,7 @@ addProductForm.addEventListener("submit", async function (e) {
     InStock: productInStock.value.toLowerCase() === "true",
   };
 
-  addProduct(productObject);
+  addProduct(this);
 });
 
 const productsList = document.querySelector(".productsList");

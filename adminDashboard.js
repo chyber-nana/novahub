@@ -240,7 +240,7 @@ addProductForm.addEventListener("submit", async function (e) {
     InStock: productInStock.value.toLowerCase() === "true",
   };
 
-  addProduct(this);
+  addProduct(productObject);
 });
 
 const productsList = document.querySelector(".productsList");

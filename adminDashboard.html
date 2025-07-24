@@ -142,15 +142,15 @@
                                             <h1>Add A PRODUCT</h1>
                                         <div class="formGroup">
                                             <label for="productName">Product Name</label>
-                                            <input type="text" id="productName" name="productName" required>
+                                            <input type="text" id="productName" name="ItemName" required>
                                         </div>
                                         <div class="formGroup">
                                             <label for="productPrice">Price</label>
-                                            <input type="number" id="productPrice" name="productPrice" required>
+                                            <input type="number" id="productPrice" name="Price" required>
                                         </div>
                                         <div class="formGroup">
                                             <label for="productCategory">Category</label>
-                                            <select id="productCategory" name="productCategory" required>
+                                            <select id="productCategory" name="ItemCategory" required>
                                                 <!-- Categories will be dynamically inserted here -->
                                                 <option value="Foreign Sim Cards">Foreign Sim Cards</option>
                                                 <option value="Gift Cards">Gift Cards</option>
@@ -160,34 +160,35 @@
                                                 <option value="Subscription">Subscription</option>
                                             </select>
                                         </div>
-                                    <div class="formGroup">
-                                        <label for="productImage">Image URL</label>
-                                        <input type="file" id="productImage" name="image" accept="image/*">
+                                        <div class="formGroup">
+                                            <label for="productImage">Image URL</label>
+                                            <input type="file" id="productImage" name="image" accept="image/*">
 
-                                    </div>
+                                        </div>
                                         <div class="formGroup">
                                             <label for="productStock">Product Stock Number</label>
-                                            <input type="number" name="productStock" id="productStock" required>
+                                            <input type="number" name="Stock" id="productStock" required>
                                         </div>
                                         <div class="formGroup">
                                             <label for="productStatus">Product Status</label>
-                                            <select name="productStatus" id="productStatus" required>
-                                                <option value="In stock">In stock</option>
-                                                <option value="Available">Available</option>
-                                                <option value="Unavailable">Unavailable</option>
+                                            <select name="Status" id="productStatus" required>
+                                                <option value="available">Available</option>
+                                                <option value="unavailable">Unavailable</option>
                                             </select>
+
                                         </div>
                                         <div class="formGroup">
                                             <label for="productNotes">Notes (Optional)</label>
-                                            <input type="text" name="productNotes" id="productNotes">
+                                            <input type="text" name="Notes" id="productNotes">
                                         </div>
                                         <div class="formGroup">
-                                            <label for="productInStock">Is Product In stock?</label>
-                                            <select name="productInStock" id="productInStock">
+                                            <label for="inStock">Product In Stock?</label>
+                                            <select name="InStock" id="inStock" required>
                                                 <option value="true">Yes</option>
                                                 <option value="false">No</option>
                                             </select>
                                         </div>
+
                                         <div class="formGroup">
                                             <button type="button" id="cancelAddProduct">Cancel</button>
                                         </div>

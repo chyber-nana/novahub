@@ -63,20 +63,27 @@ async function fetchProducts() {
   }
 }
 
-async function addProduct(formElement) {
-  const formData = new FormData(formElement);
-
+async function addProduct(form) {
   try {
+    const formData = new FormData(form);
+
+    formData.set("Status", form.querySelector("#productStatus").value);
+    formData.set("ItemCategory", form.querySelector("#productCategory").value.toLowerCase());
+
+    // const imageFile = document.querySelector("#productImage").files[0];
+    // if (imageFile) {
+    //   formData.set("ImageURL", imageFile); // will be processed by multer
+    // }
+
     const res = await fetch("https://novahub-backend.onrender.com/api/products/add", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+        Authorization: `Bearer ${localStorage.getItem("adminToken") || ""}`,
       },
-      body: formData,
+      body: formData, // ✅ no JSON.stringify
     });
 
     const data = await res.json();
-
     if (!res.ok) throw new Error(data.message || "Failed to add product");
 
     alert("✅ Product added!");
@@ -86,8 +93,9 @@ async function addProduct(formElement) {
     alert("❌ " + err.message);
   }
 
-  // editForm.classList.add("hidden");  
+  editForm.classList.add("hidden");
 }
+
 
 
 async function updateProduct(productId, updatedData) {
@@ -222,28 +230,9 @@ const addProductForm = document.getElementById("addProductForm");
 
 addProductForm.addEventListener("submit", async function (e) {
   e.preventDefault();
-  const productName = document.getElementById("productName");
-  const productPrice = document.getElementById("productPrice");
-  const productCategory = document.getElementById("productCategory");
-  const productStock = document.getElementById("productStock");
-  const imageFile = document.querySelector("#productImage").files[0]; // ✅ will be undefined if no file selected
-
-  const productObject = {
-    ImageURL: imageFile || null,
-    ItemName: productName.value,
-    ItemCategory: productCategory.value.toLowerCase(),
-    Price: parseFloat(productPrice.value.split("-")[0]) || 0, // takes min price
-    Stock: parseInt(productStock.value, 10) || 0,
-    Status:
-      productStatus.value.toLowerCase() === "in stock"
-        ? "available"
-        : "unavailable",
-    Notes: productNotes.value || "",
-    InStock: productInStock.value.toLowerCase() === "true",
-  };
-
-  addProduct(addProductForm);
+  await addProduct(addProductForm); // 💡 Pass the form element
 });
+
 
 const productsList = document.querySelector(".productsList");
 const categoryItemName = document.querySelector(".categoryItemName");

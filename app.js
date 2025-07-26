@@ -796,7 +796,7 @@ const selectItem = (productElement) => {
       item.ItemName === productElement.querySelector(".item--name").textContent
   );
   selectedItemsPage.getElementsByClassName("texts")[0].innerHTML = `
-        <img src="./Images/Imagesss/${productData.ItemName}.png" alt="${
+        <img src="${productData.ImageURL}" alt="${
     productData.ItemName.split(" ")[0]
   } flag" id="selected--item--image">
         <h1 class="selected--item--name">
